@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public class Utils {
@@ -51,5 +52,13 @@ public class Utils {
                 }
             }
         }
+    }
+
+    public static String getCSV(List<String> strings) {
+        return getCSV(strings, ParadoxParsingUtils.LOCALISATION_SPLITTER);
+    }
+
+    public static String getCSV(List<String> strings, String delimiter) {
+        return StringUtils.join(strings, delimiter);
     }
 }
