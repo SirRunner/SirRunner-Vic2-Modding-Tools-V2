@@ -3,12 +3,11 @@ package map.writer;
 import map.definitions.MapDefinitions;
 import map.regions.Region;
 import org.apache.commons.lang3.StringUtils;
-import utils.ParadoxParsingUtils;
+import utils.paradox.parsing.ParadoxParsingUtils;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class MapLocalisationWriter {

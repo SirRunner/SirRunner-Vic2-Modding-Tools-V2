@@ -3,7 +3,7 @@ package map.reader;
 import map.regions.Region;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
-import utils.ParadoxParsingUtils;
+import utils.paradox.parsing.ParadoxParsingUtils;
 import utils.baseclasses.BaseReader;
 
 import java.io.BufferedReader;

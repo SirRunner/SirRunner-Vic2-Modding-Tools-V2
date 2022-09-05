@@ -2,7 +2,6 @@ package map.adjacencies;
 
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
-import utils.ParadoxParsingUtils;
 import utils.Utils;
 
 import java.util.*;

@@ -1,4 +1,4 @@
-package utils;
+package utils.paradox.parsing;
 
 public class ParadoxParsingUtils {
     public static final String DEFINES = "=";

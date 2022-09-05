@@ -1,6 +1,7 @@
 package utils;
 
 import org.apache.commons.lang3.StringUtils;
+import utils.paradox.parsing.ParadoxParsingUtils;
 
 import java.io.File;
 import java.util.Arrays;
