@@ -8,6 +8,7 @@ import java.util.List;
 
 public class EffectScope extends BasicEffect {
     List<BasicEffect> effects;
+    // TODO: Handle limits
 
     public EffectScope() {
         this.effects = new ArrayList<>();
