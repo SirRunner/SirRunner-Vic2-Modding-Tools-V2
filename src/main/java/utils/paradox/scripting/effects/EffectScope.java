@@ -1,5 +1,6 @@
 package utils.paradox.scripting.effects;
 
+import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class EffectScope extends BasicEffect {
     protected String getContentToString() {
         StringBuilder string = new StringBuilder();
 
-        string.append(getIndent()).append(getName()).append(" = {\n");
+        string.append(StringUtils.repeat("\t", getIndent())).append(getName()).append(" = {\n");
 
         for (BasicEffect condition : getEffects()) {
             string.append(condition.toString());
@@ -61,7 +62,7 @@ public class EffectScope extends BasicEffect {
 
         string.append("\n");
 
-        string.append(getIndent()).append("}");
+        string.append(StringUtils.repeat("\t", getIndent())).append("}");
 
         return string.toString();
     }

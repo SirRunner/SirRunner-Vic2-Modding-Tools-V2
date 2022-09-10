@@ -1,5 +1,6 @@
 package utils.paradox.scripting.conditions;
 
+import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 import utils.paradox.scripting.effects.BasicEffect;
 
@@ -50,7 +51,7 @@ public class ConditionScope extends BasicCondition {
     protected String getContentToString() {
         StringBuilder string = new StringBuilder();
 
-        string.append(getIndent()).append(getName()).append(" = {\n");
+        string.append(StringUtils.repeat("\t", getIndent())).append(getName()).append(" = {\n");
 
         for (BasicCondition condition : getConditions()) {
             string.append(condition.toString());
@@ -58,7 +59,7 @@ public class ConditionScope extends BasicCondition {
 
         string.append("\n");
 
-        string.append(getIndent()).append("}");
+        string.append(StringUtils.repeat("\t", getIndent())).append("}");
 
         return string.toString();
     }

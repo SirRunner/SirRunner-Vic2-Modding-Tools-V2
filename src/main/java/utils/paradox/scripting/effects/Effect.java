@@ -1,5 +1,7 @@
 package utils.paradox.scripting.effects;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Effect extends BasicEffect {
     protected String value;
 
@@ -23,6 +25,6 @@ public class Effect extends BasicEffect {
 
     @Override
     protected String getContentToString() {
-        return getIndent() + getName() + " = " + getValue();
+        return StringUtils.repeat("\t", getIndent()) + getName() + " = " + getValue();
     }
 }

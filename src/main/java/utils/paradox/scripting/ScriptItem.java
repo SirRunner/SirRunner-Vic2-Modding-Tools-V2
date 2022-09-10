@@ -1,5 +1,6 @@
 package utils.paradox.scripting;
 
+import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 
 public abstract class ScriptItem {
@@ -83,13 +84,13 @@ public abstract class ScriptItem {
         StringBuilder string = new StringBuilder();
 
         if (getCommentLocation() == COMMENTLOCATION.BEFORE) {
-            string.append(getIndent()).append("# ").append(getComment()).append("\n");
+            string.append(StringUtils.repeat("\t", getIndent())).append("# ").append(getComment()).append("\n");
         }
 
         string.append(getContentToString());
 
         if (getCommentLocation() == COMMENTLOCATION.AFTER) {
-            string.append(getIndent()).append(" # ").append(getComment());
+            string.append(StringUtils.repeat("\t", getIndent())).append(" # ").append(getComment());
         }
 
         string.append("\n");

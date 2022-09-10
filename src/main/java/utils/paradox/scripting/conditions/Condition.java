@@ -1,5 +1,7 @@
 package utils.paradox.scripting.conditions;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Condition extends BasicCondition {
     protected String value;
 
@@ -23,6 +25,6 @@ public class Condition extends BasicCondition {
 
     @Override
     protected String getContentToString() {
-        return getIndent() + getName() + " = " + getValue();
+        return StringUtils.repeat("\t", getIndent()) + getName() + " = " + getValue();
     }
 }
