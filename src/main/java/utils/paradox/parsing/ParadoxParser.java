@@ -1,6 +1,7 @@
 package utils.paradox.parsing;
 
 import org.apache.commons.lang3.StringUtils;
+import utils.Logger;
 import utils.paradox.nodes.Node;
 
 import java.io.BufferedReader;
@@ -102,7 +103,7 @@ public class ParadoxParser {
 
             node.setComment(word);
         } else if (ParadoxParsingUtils.NON_COMMENT_KEYWORDS.contains(word)) {
-            // TODO: Throw error. We should have the name of the node here
+            logExpectingNodeNameError(nodes, word);
         } else {
             Node node = addNewNode(nodes);
 
@@ -113,28 +114,101 @@ public class ParadoxParser {
         return null;
     }
 
+    protected static void logExpectingValueError(Node node, String word) {
+        Logger.error("Expecting bracket or value following \"" + node.getName() + " = \" but got " + word);
+    }
+
+    protected static void logExpectingValueError(String word) {
+        Logger.error("Expecting bracket or value but got " + word);
+    }
+
+    protected static void logNotExpectingBracketError(Node node) {
+        if (node == null) {
+            logNotExpectingBracketError();
+        } else {
+            Logger.error("Received open bracket for " + node.getName() + " when the previous character was not \"=\"");
+        }
+    }
+
+    protected static void logNotExpectingBracketError() {
+        Logger.error("Received opening bracket but there is no existing node");
+    }
+
+    protected static void logExpectingNodeNameError(String word) {
+        Logger.error("Was expecting name of new node but received " + word);
+    }
+
+    protected static void logExpectingNodeNameError(Node node, String word) {
+        if (node != null) {
+            Logger.error("Was expecting name of new node after closing of node named " + node.getName() + ", but received " + word);
+        } else {
+            logExpectingNodeNameError(word);
+        }
+    }
+
+    protected static void logExpectingNodeNameError(List<Node> nodes, String word) {
+        if (nodes == null) {
+            logExpectingNodeNameError(word);
+        } else {
+            logExpectingNodeNameError(nodes.get(nodes.size() - 1), word);
+        }
+    }
+
+    protected static void logClosingBracketForNonExistingNodeError() {
+        Logger.info("Read closing bracket but there is no open node. This is not an error, but is bad practice");
+    }
+
     protected List<Node> getNodesFromWords(List<String> words) {
         List<Node> nodes = new ArrayList<>();
         Node currentNode = null;
         Node parentNode = null;
         int i = 0;
+        boolean expectingBracketOrValue = false;
 
         while (i < words.size()) {
             String word = words.get(i);
 
             if (parentNode == null && currentNode == null) {
+                /* If we are expecting a value, we should have at least a currentNode */
+                if (expectingBracketOrValue) {
+                    logExpectingValueError(word);
+                    continue;
+                }
+
                 currentNode = handleNewNode(nodes, word);
             } else if (StringUtils.equals(ParadoxParsingUtils.DEFINES, word)) {
-                // TODO: Do something to ensure that the next value is an open bracket or a value
+                /* If we are expecting a value, "=" is not a value */
+                if (expectingBracketOrValue) {
+                    if (currentNode == null) {
+                        logExpectingValueError(word);
+                    } else {
+                        logExpectingValueError(currentNode, word);
+                    }
+
+                    continue;
+                }
+
+                expectingBracketOrValue = true;
             } else if (StringUtils.equals(ParadoxParsingUtils.OPEN_BLOCK, word)) {
+                if (!expectingBracketOrValue) {
+                    logNotExpectingBracketError(currentNode);
+                    continue;
+                }
+
+                expectingBracketOrValue = false;
+
                 /* Get setup to make the next node */
                 parentNode = currentNode;
 
-                /* If the next word is not a closing bracket, prepare for a new node */
+                /* It is possible that there is nothing inside this node. If the next word is not a closing bracket, prepare for a new node */
                 if (i + 1 < words.size() && !StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, words.get(i + 1))) {
                     currentNode = null;
                 }
             } else if (StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, word)) {
+                if (currentNode == null) {
+                    logClosingBracketForNonExistingNodeError();
+                    continue;
+                }
                 /* Close the current node */
                 parentNode = currentNode.getParent();
 
@@ -154,6 +228,13 @@ public class ParadoxParser {
                     currentNode.setLayer(parentNode.getLayer() + 1);
                 }
             } else {
+                if (!expectingBracketOrValue) {
+                    logNotExpectingBracketError(currentNode);
+                    continue;
+                }
+
+                expectingBracketOrValue = false;
+
                 /* If we see a value for a node, this is the last word for this node. Update the node and then prepare for the next one */
                 currentNode.setValue(word);
 
