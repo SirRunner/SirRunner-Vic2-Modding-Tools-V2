@@ -1,5 +1,7 @@
 package utils.paradox.scripting.conditions;
 
+import utils.paradox.scripting.effects.BasicEffect;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +13,22 @@ public class ConditionScope extends BasicCondition {
     }
 
     public void setConditions(List<BasicCondition> conditions) {
-        this.conditions = conditions;
+        for (BasicCondition condition: conditions) {
+            addCondition(condition);
+        }
     }
 
     public void addCondition(BasicCondition condition) {
         this.conditions.add(condition);
+    }
+
+    @Override
+    public void setIndent(int indent) {
+        for(BasicCondition condition:conditions) {
+            condition.setIndent(indent + 1);
+        }
+
+        this.indent = indent;
     }
 
     @Override

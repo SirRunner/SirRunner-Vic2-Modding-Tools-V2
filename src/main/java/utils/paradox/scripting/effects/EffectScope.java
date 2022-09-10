@@ -4,18 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EffectScope extends BasicEffect {
-    List<BasicEffect> effects = new ArrayList<>();
+    List<BasicEffect> effects;
+
+    public EffectScope() {
+        this.effects = new ArrayList<>();
+    }
 
     public List<BasicEffect> getEffects() {
         return effects;
     }
 
     public void setEffects(List<BasicEffect> effects) {
-        this.effects = effects;
+        for (BasicEffect effect : effects) {
+            addEffect(effect);
+        }
     }
 
     public void addEffect(BasicEffect effect) {
         this.effects.add(effect);
+    }
+
+    @Override
+    public void setIndent(int indent) {
+        for (BasicEffect effect : effects) {
+            effect.setIndent(indent + 1);
+        }
+
+        this.indent = indent;
     }
 
     @Override
