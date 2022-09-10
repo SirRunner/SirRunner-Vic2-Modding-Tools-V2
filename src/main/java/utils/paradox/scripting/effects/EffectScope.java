@@ -1,9 +1,5 @@
 package utils.paradox.scripting.effects;
 
-import org.apache.commons.lang3.StringUtils;
-import utils.paradox.scripting.ScriptItem;
-import utils.paradox.scripting.conditions.BasicCondition;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +34,7 @@ public class EffectScope extends BasicEffect {
 
         string.append(getIndent()).append(getName()).append(" = {\n");
 
-        for (BasicEffect condition:getEffects()) {
+        for (BasicEffect condition : getEffects()) {
             string.append(condition.toString());
         }
 

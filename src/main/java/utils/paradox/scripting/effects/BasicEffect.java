@@ -1,7 +1,6 @@
 package utils.paradox.scripting.effects;
 
 import utils.paradox.scripting.ScriptItem;
-import utils.paradox.scripting.conditions.BasicCondition;
 
 import java.util.HashMap;
 import java.util.HashSet;

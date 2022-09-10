@@ -34,7 +34,7 @@ public class ConditionScope extends BasicCondition {
 
         string.append(getIndent()).append(getName()).append(" = {\n");
 
-        for (BasicCondition condition:getConditions()) {
+        for (BasicCondition condition : getConditions()) {
             string.append(condition.toString());
         }
 

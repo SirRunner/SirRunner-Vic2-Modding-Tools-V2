@@ -1,8 +1,5 @@
 package utils.paradox.scripting.effects;
 
-import org.apache.commons.lang3.StringUtils;
-import utils.paradox.scripting.ScriptItem;
-
 public class Effect extends BasicEffect {
     protected String value;
 
