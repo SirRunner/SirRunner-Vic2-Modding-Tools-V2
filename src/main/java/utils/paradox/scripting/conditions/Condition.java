@@ -1,9 +1,20 @@
 package utils.paradox.scripting.conditions;
 
 import org.apache.commons.lang3.StringUtils;
+import utils.paradox.nodes.Node;
+
+import java.util.Map;
+import java.util.Set;
 
 public class Condition extends BasicCondition {
     protected String value;
+
+    public Condition(Node node) {
+        super(node);
+
+        setValue(node.getValue());
+        setItemScope(getScopeOfItem(node.getName()));
+    }
 
     public String getValue() {
         return value;
@@ -14,13 +25,13 @@ public class Condition extends BasicCondition {
     }
 
     @Override
-    protected boolean validateName(String name) {
-        return getValidConditions().get(getItemScope()).contains(name);
+    protected String getFriendlyClassName() {
+        return "condition";
     }
 
     @Override
-    protected String getFriendlyClassName() {
-        return "condition";
+    protected Map<ITEMSCOPE, Set<String>> getCorrectConditionMap() {
+        return getValidConditions();
     }
 
     @Override

@@ -1,6 +1,8 @@
 package decisions.nodes;
 
 import org.apache.commons.lang3.StringUtils;
+import utils.paradox.nodes.Node;
+import utils.paradox.scripting.effects.Effect;
 
 public class Decision {
     protected String name;
@@ -11,12 +13,36 @@ public class Decision {
     protected AIWillDo aiWillDo;
     protected int indent = 1;
 
-    public Decision() {
-        super();
+    public static final String PICTURE = "picture";
+    public static final String POTENTIAL = "potential";
+    public static final String ALLOW = "allow";
+    public static final String EFFECT = "effect";
+    public static final String AIWILLDO = "ai_will_do";
 
+    public Decision() {
         this.potential = new Potential();
         this.allow = new Allow();
         this.decisionEffect = new DecisionEffect();
+    }
+
+    public Decision(Node node) {
+        this();
+
+        setName(node.getName());
+
+        for (Node innerNode : node.getNodes()) {
+            addNodeByName(innerNode);
+        }
+    }
+
+    protected void addNodeByName(Node node) {
+        switch(node.getName()) {
+            case PICTURE -> setPicture(new Picture(node));
+            case POTENTIAL -> setPotential(new Potential(node));
+            case ALLOW -> setAllow(new Allow(node));
+            case EFFECT -> setEffect(new DecisionEffect(node));
+            case AIWILLDO -> setAiWillDo(new AIWillDo(node));
+        }
     }
 
     public String getName() {

@@ -2,6 +2,7 @@ package utils.paradox.scripting;
 
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
+import utils.paradox.nodes.Node;
 
 public abstract class ScriptItem {
     protected String comment;
@@ -10,23 +11,38 @@ public abstract class ScriptItem {
     protected COMMENTLOCATION commentLocation = COMMENTLOCATION.BEFORE;
     protected ITEMSCOPE itemScope;
 
+    protected enum LOGICKEYWORDS {
+        AND,
+        NOT,
+        OR
+    }
+
     protected enum COMMENTLOCATION {
         BEFORE,
         AFTER
     }
 
-    protected enum ITEMSCOPE {
+    public enum ITEMSCOPE {
         COUNTRY,
         PROVINCE,
         POP
     }
 
-    protected String getComment() {
+    public ScriptItem(Node node) {
+        setComment(node.getComment());
+        setName(node.getName());
+    }
+
+    public String getComment() {
         return comment;
     }
 
-    protected void setComment(String comment) {
+    public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean hasComment() {
+        return StringUtils.isNotEmpty(getComment());
     }
 
     public COMMENTLOCATION getCommentLocation() {
@@ -83,13 +99,13 @@ public abstract class ScriptItem {
 
         StringBuilder string = new StringBuilder();
 
-        if (getCommentLocation() == COMMENTLOCATION.BEFORE) {
+        if (hasComment() && getCommentLocation() == COMMENTLOCATION.BEFORE) {
             string.append(StringUtils.repeat("\t", getIndent())).append("# ").append(getComment()).append("\n");
         }
 
         string.append(getContentToString());
 
-        if (getCommentLocation() == COMMENTLOCATION.AFTER) {
+        if (hasComment() && getCommentLocation() == COMMENTLOCATION.AFTER) {
             string.append(StringUtils.repeat("\t", getIndent())).append(" # ").append(getComment());
         }
 

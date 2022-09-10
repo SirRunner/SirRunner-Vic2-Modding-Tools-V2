@@ -1,5 +1,8 @@
 package utils.paradox.scripting.effects;
 
+import org.apache.commons.lang3.StringUtils;
+import utils.Logger;
+import utils.paradox.nodes.Node;
 import utils.paradox.scripting.ScriptItem;
 
 import java.util.HashMap;
@@ -8,7 +11,12 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class BasicEffect extends ScriptItem {
+    // TODO: Handle keywords in effects (such as name)
     protected enum VALIDCOUNTRYEFFECTS {
+        COUNTRY_EVENT,
+        DIPLOMATIC_INFLUENCE,
+        POLITICAL_REFORM,
+        RELEASE_VASSAL
     }
 
     protected enum VALIDPROVINCEEFFECTS {
@@ -26,6 +34,10 @@ public abstract class BasicEffect extends ScriptItem {
     protected enum VALIDPOPEFFECTSCOPES {
     }
 
+    public BasicEffect(Node node) {
+        super(node);
+    }
+
     protected static Map<ITEMSCOPE, Set<String>> validEffects = new HashMap<>();
     protected static Map<ITEMSCOPE, Set<String>> validEffectscopes = new HashMap<>();
 
@@ -36,15 +48,15 @@ public abstract class BasicEffect extends ScriptItem {
             validEffects.put(ITEMSCOPE.POP, new HashSet<>());
 
             for (VALIDCOUNTRYEFFECTS c : VALIDCOUNTRYEFFECTS.values()) {
-                validEffects.get(ITEMSCOPE.COUNTRY).add(c.name());
+                validEffects.get(ITEMSCOPE.COUNTRY).add(StringUtils.upperCase(c.name()));
             }
 
             for (VALIDPROVINCEEFFECTS c : VALIDPROVINCEEFFECTS.values()) {
-                validEffects.get(ITEMSCOPE.PROVINCE).add(c.name());
+                validEffects.get(ITEMSCOPE.PROVINCE).add(StringUtils.upperCase(c.name()));
             }
 
             for (VALIDPOPEFFECTS c : VALIDPOPEFFECTS.values()) {
-                validEffects.get(ITEMSCOPE.POP).add(c.name());
+                validEffects.get(ITEMSCOPE.POP).add(StringUtils.upperCase(c.name()));
             }
         }
 
@@ -58,18 +70,40 @@ public abstract class BasicEffect extends ScriptItem {
             validEffectscopes.put(ITEMSCOPE.POP, new HashSet<>());
 
             for (VALIDCOUNTRYEFFECTSCOPES c : VALIDCOUNTRYEFFECTSCOPES.values()) {
-                validEffectscopes.get(ITEMSCOPE.COUNTRY).add(c.name());
+                validEffectscopes.get(ITEMSCOPE.COUNTRY).add(StringUtils.upperCase(c.name()));
             }
 
             for (VALIDPROVINCEEFFECTSCOPES c : VALIDPROVINCEEFFECTSCOPES.values()) {
-                validEffectscopes.get(ITEMSCOPE.PROVINCE).add(c.name());
+                validEffectscopes.get(ITEMSCOPE.PROVINCE).add(StringUtils.upperCase(c.name()));
             }
 
             for (VALIDPOPEFFECTSCOPES c : VALIDPOPEFFECTSCOPES.values()) {
-                validEffectscopes.get(ITEMSCOPE.POP).add(c.name());
+                validEffectscopes.get(ITEMSCOPE.POP).add(StringUtils.upperCase(c.name()));
             }
         }
 
         return validEffectscopes;
+    }
+
+    protected abstract Map<ITEMSCOPE, Set<String>> getCorrectEffectMap();
+
+    @Override
+    protected boolean validateName(String name) {
+        return getScopeOfItem(name) != null;
+    }
+
+    protected ITEMSCOPE getScopeOfItem(String value) {
+        Map<ITEMSCOPE, Set<String>> itemscopeToValidNames = getCorrectEffectMap();
+
+        String upperValue = StringUtils.upperCase(value);
+
+        for (ITEMSCOPE itemscope : itemscopeToValidNames.keySet()) {
+            if (itemscopeToValidNames.get(itemscope).contains(upperValue)) {
+                return itemscope;
+            }
+        }
+
+        Logger.error(value + " is not a valid effect or effect scope");
+        return null;
     }
 }
