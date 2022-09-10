@@ -1,5 +1,7 @@
 package utils.paradox.scripting.effects;
 
+import utils.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +23,11 @@ public class EffectScope extends BasicEffect {
     }
 
     public void addEffect(BasicEffect effect) {
-        this.effects.add(effect);
+        if (this == effect) {
+            Logger.error("Cannot add itself to list of effects");
+        } else {
+            this.effects.add(effect);
+        }
     }
 
     @Override

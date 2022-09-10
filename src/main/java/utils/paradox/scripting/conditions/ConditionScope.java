@@ -1,5 +1,6 @@
 package utils.paradox.scripting.conditions;
 
+import utils.Logger;
 import utils.paradox.scripting.effects.BasicEffect;
 
 import java.util.ArrayList;
@@ -19,7 +20,11 @@ public class ConditionScope extends BasicCondition {
     }
 
     public void addCondition(BasicCondition condition) {
-        this.conditions.add(condition);
+        if (this == condition) {
+            Logger.error("Cannot add itself to list of conditions");
+        } else {
+            this.conditions.add(condition);
+        }
     }
 
     @Override
