@@ -174,6 +174,16 @@ public class ParadoxParser {
         Logger.info("Read closing bracket but there is no open node. This is not an error, but is bad practice");
     }
 
+    protected String getNextNonCommentString(List<String> words, int start) {
+        for (int i = start; i < words.size(); i++) {
+            if (!StringUtils.startsWith(words.get(i), ParadoxParsingUtils.COMMENT_START)) {
+                return words.get(i);
+            }
+        }
+
+        return null;
+    }
+
     protected List<Node> getNodesFromWords(List<String> words) {
         List<Node> nodes = new ArrayList<>();
         Node currentNode = null;
@@ -216,8 +226,8 @@ public class ParadoxParser {
                 /* Get setup to make the next node */
                 parentNode = currentNode;
 
-                /* It is possible that there is nothing inside this node. If the next word is not a closing bracket, prepare for a new node */
-                if (i + 1 < words.size() && !StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, words.get(i + 1))) {
+                /* It is possible that there is nothing inside this node. If the next non-comment word is not a closing bracket, prepare for a new node */
+                if (i + 1 < words.size() && !StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, getNextNonCommentString(words, i + 1))) {
                     currentNode = null;
                 }
             } else if (StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, word)) {
@@ -228,8 +238,8 @@ public class ParadoxParser {
                 /* Close the current node */
                 parentNode = currentNode.getParent();
 
-                /* If the next word is not a closing bracket, prepare for a new node. Otherwise, update the currentNode to be the parent */
-                if (i + 1 < words.size() && !StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, words.get(i + 1))) {
+                /* If the next non-comment word is not a closing bracket, prepare for a new node. Otherwise, update the currentNode to be the parent */
+                if (i + 1 < words.size() && !StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, getNextNonCommentString(words, i + 1))) {
                     currentNode = null;
                 } else {
                     currentNode = parentNode;
@@ -243,6 +253,9 @@ public class ParadoxParser {
                     currentNode.setParent(parentNode);
                     currentNode.setLayer(parentNode.getLayer() + 1);
                 }
+            } else if (StringUtils.startsWith(words.get(i), ParadoxParsingUtils.COMMENT_START)) {
+                /* If we see a comment in the middle of the code, put it in it's own node, but don't change any of the existing pointers to the current or parent node */
+                handleNewNode(currentNode.getNodes(), word);
             } else {
                 if (!expectingBracketOrValue) {
                     logNotExpectingBracketError(currentNode);
@@ -254,8 +267,8 @@ public class ParadoxParser {
                 /* If we see a value for a node, this is the last word for this node. Update the node and then prepare for the next one */
                 currentNode.setValue(word);
 
-                /* If the next word is not a closing bracket, prepare for a new node */
-                if (i + 1 < words.size() && !StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, words.get(i + 1))) {
+                /* If the next non-comment word is not a closing bracket, prepare for a new node */
+                if (i + 1 < words.size() && !StringUtils.equals(ParadoxParsingUtils.CLOSE_BLOCK, getNextNonCommentString(words, i + 1))) {
                     currentNode = null;
                 } else {
                     currentNode = currentNode.getParent();
