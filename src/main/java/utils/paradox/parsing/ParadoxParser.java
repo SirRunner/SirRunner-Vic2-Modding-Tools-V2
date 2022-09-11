@@ -57,12 +57,17 @@ public class ParadoxParser {
         List<String> words = new ArrayList<>();
         StringBuilder currentWord = new StringBuilder(0);
         boolean comment = false;
+        boolean isQuote = false;
 
         for (char character : line.toCharArray()) {
             String stringCharacter = Character.toString(character);
 
             if (comment) {
                 appendCharacter(currentWord, stringCharacter);
+            } else if (isQuote) {
+                appendCharacter(currentWord, stringCharacter);
+
+                isQuote = !StringUtils.equals(ParadoxParsingUtils.TEXT_START, stringCharacter);
             } else if (ParadoxParsingUtils.KEYWORD_CHARACTERS.contains(stringCharacter)) {
                 addCurrentWord(words, currentWord);
 
@@ -75,6 +80,9 @@ public class ParadoxParser {
 
                     addCurrentWord(words, currentCharacter);
                 }
+            } else if (StringUtils.equals(ParadoxParsingUtils.TEXT_START, stringCharacter)) {
+                isQuote = true;
+                appendCharacter(currentWord, stringCharacter);
             } else if (Character.isWhitespace(character)) {
                 addCurrentWord(words, currentWord);
             } else {
@@ -84,6 +92,10 @@ public class ParadoxParser {
 
         if (words.isEmpty() || !StringUtils.equals(words.get(words.size() - 1), currentWord.toString())) {
             addCurrentWord(words, currentWord);
+        }
+
+        if (isQuote) {
+            logOpenQuoteError(currentWord.toString());
         }
 
         return words;
@@ -112,6 +124,10 @@ public class ParadoxParser {
         }
 
         return null;
+    }
+
+    protected static void logOpenQuoteError(String word) {
+        Logger.error("Quote was not closed for " + word);
     }
 
     protected static void logExpectingValueError(Node node, String word) {
