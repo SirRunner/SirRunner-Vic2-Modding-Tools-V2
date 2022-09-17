@@ -291,10 +291,14 @@ public class RenamingDecisionGenerator {
 
         String cultureName = cultureGroups.stream().findAny().get();
 
-        renamingScopes.add(getRegionRenameEffectScope(provinceRenamings.get(0).getProvinceId(), cultureName, regionRenaming));
+        if (StringUtils.isNotEmpty(regionRenaming.getNameForCultureGroup(cultureName))) {
+            renamingScopes.add(getRegionRenameEffectScope(provinceRenamings.get(0).getProvinceId(), cultureName, regionRenaming));
+        }
 
         for (ProvinceRenaming provinceRenaming : provinceRenamings) {
-            renamingScopes.add(getProvinceRenamingEffectScope(provinceRenaming.getProvinceId(), cultureName, provinceRenaming));
+            if (StringUtils.isNotEmpty(provinceRenaming.getNameForCultureGroup(cultureName))) {
+                renamingScopes.add(getProvinceRenamingEffectScope(provinceRenaming.getProvinceId(), cultureName, provinceRenaming));
+            }
         }
 
         return renamingScopes;
