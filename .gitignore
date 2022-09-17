@@ -1,2 +1,4 @@
 /target/
 /.idea/
+/src/main/java/decisions/generators/Localization.txt
+/src/main/java/decisions/generators/Starting Effects.txt
