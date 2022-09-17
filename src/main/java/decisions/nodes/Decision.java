@@ -12,6 +12,7 @@ public class Decision {
     protected DecisionEffect decisionEffect;
     protected AIWillDo aiWillDo;
     protected int indent = 1;
+    protected String comment;
 
     public static final String PICTURE = "picture";
     public static final String POTENTIAL = "potential";
@@ -40,7 +41,7 @@ public class Decision {
             case PICTURE -> setPicture(new Picture(node));
             case POTENTIAL -> setPotential(new Potential(node));
             case ALLOW -> setAllow(new Allow(node));
-            case EFFECT -> setEffect(new DecisionEffect(node));
+            case EFFECT -> setDecisionEffect(new DecisionEffect(node));
             case AIWILLDO -> setAiWillDo(new AIWillDo(node));
         }
     }
@@ -77,11 +78,11 @@ public class Decision {
         this.allow = allow;
     }
 
-    public DecisionEffect getEffect() {
+    public DecisionEffect getDecisionEffect() {
         return decisionEffect;
     }
 
-    public void setEffect(DecisionEffect decisionEffect) {
+    public void setDecisionEffect(DecisionEffect decisionEffect) {
         this.decisionEffect = decisionEffect;
     }
 
@@ -101,6 +102,14 @@ public class Decision {
         this.indent = indent;
     }
 
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
     public String toString() {
         StringBuilder string = new StringBuilder();
 
@@ -112,7 +121,7 @@ public class Decision {
 
         string.append(getPotential().toString());
         string.append(getAllow().toString());
-        string.append(getEffect().toString());
+        string.append(getDecisionEffect().toString());
 
         if (getAiWillDo() != null) {
             string.append(getAiWillDo().toString());

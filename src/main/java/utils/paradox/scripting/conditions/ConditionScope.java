@@ -13,6 +13,10 @@ import java.util.Set;
 public class ConditionScope extends BasicCondition {
     List<BasicCondition> conditions = new ArrayList<>();
 
+    public ConditionScope() {
+        this.conditions = new ArrayList<>();
+    }
+
     public ConditionScope(Node node) {
         super(node);
 
@@ -49,6 +53,7 @@ public class ConditionScope extends BasicCondition {
             Logger.error("Cannot add itself to list of conditions");
         } else {
             this.conditions.add(condition);
+            condition.setIndent(getIndent() + 1);
         }
     }
 
@@ -72,18 +77,81 @@ public class ConditionScope extends BasicCondition {
     }
 
     @Override
-    protected String getContentToString() {
-        StringBuilder string = new StringBuilder();
-
-        string.append(StringUtils.repeat("\t", getIndent())).append(getName()).append(" = {\n");
-
-        for (BasicCondition condition : getConditions()) {
-            string.append(condition.toString());
+    protected boolean isOneLiner() {
+        if (getConditions().isEmpty()) {
+            return true;
         }
 
-        string.append("\n");
+        if (getConditions().size() == 1) {
+            /* Conditions will assume that they are a one liner. Scopes will not do anything special */
+            return getConditions().get(0).isOneLiner(true);
+        }
 
-        string.append(StringUtils.repeat("\t", getIndent())).append("}");
+        if (getConditions().size() == 2) {
+            boolean hasWhich = false;
+            boolean hasValue = false;
+
+            BasicCondition c1 = getConditions().get(0);
+            BasicCondition c2 = getConditions().get(1);
+
+            if (StringUtils.equalsIgnoreCase(c1.getName(), "WHICH" ) || StringUtils.equalsIgnoreCase(c2.getName(), "WHICH")) {
+                hasWhich = true;
+            }
+
+            if (StringUtils.equalsIgnoreCase(c1.getName(), "VALUE" ) || StringUtils.equalsIgnoreCase(c2.getName(), "VALUE")) {
+                hasValue = true;
+            }
+
+            return hasWhich && hasValue;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isOneLiner(boolean isParentOneLiner) {
+        return isOneLiner();
+    }
+
+    @Override
+    protected String getInnerContent(boolean parentOneLiner, boolean previousOneLiner) {
+        StringBuilder string = new StringBuilder();
+
+        String lineEnd = " ";
+        String tabs = "";
+
+        if (!parentOneLiner && !isOneLiner()) {
+            lineEnd = "\n";
+        }
+
+        if (!parentOneLiner) {
+            tabs = StringUtils.repeat("\t", getIndent());
+        }
+
+        string.append(tabs).append(getName()).append(" = {").append(lineEnd);
+
+        boolean isPreviousOneLiner = false;
+
+        for (int i = 0; i < getConditions().size(); i++) {
+            BasicCondition condition = getConditions().get(i);
+
+            string.append(condition.getContentToString(isOneLiner(), isPreviousOneLiner || isOneLiner()));
+
+            isPreviousOneLiner = condition.isOneLiner(parentOneLiner);
+        }
+
+        /* If the current condition scope is a one-liner, no need to put tabs before the closing bracket */
+        if (isOneLiner()) {
+            tabs = "";
+        }
+
+        /* A new line is needed if the parent is not a one liner, but the previous condition was, or when the current condition is a one liner but the parent wasn't
+           In both of these cases, we don't want a newline appended after opening the bracket, but we do want one after closing the bracket */
+        if (isPreviousOneLiner && !parentOneLiner || !parentOneLiner && isOneLiner()) {
+            lineEnd = "\n";
+        }
+
+        string.append(tabs).append("}").append(lineEnd);
 
         return string.toString();
     }

@@ -3,6 +3,7 @@ package utils.paradox.scripting;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 import utils.paradox.nodes.Node;
+import utils.paradox.scripting.conditions.ConditionScope;
 
 public abstract class ScriptItem {
     protected String comment;
@@ -27,6 +28,8 @@ public abstract class ScriptItem {
         PROVINCE,
         POP
     }
+
+    public ScriptItem() {}
 
     public ScriptItem(Node node) {
         setComment(node.getComment());
@@ -90,27 +93,59 @@ public abstract class ScriptItem {
         this.itemScope = itemScope;
     }
 
-    protected abstract String getContentToString();
+    protected abstract String getInnerContent(boolean parentOneLiner, boolean previousOneLiner);
 
-    public String toString() {
+    protected abstract boolean isOneLiner();
+
+    public abstract boolean isOneLiner(boolean isParentOneLiner);
+
+    protected String getLineEnd() {
+        if (isOneLiner()) {
+            return " ";
+        }
+
+        return "\n";
+    }
+
+    public boolean shouldUseNewline(boolean parentOneLiner) {
+        boolean isOneLiner = isOneLiner();
+        return !isOneLiner() && !parentOneLiner || isOneLiner() && !parentOneLiner;
+    }
+
+    public String getContentToString(boolean parentOneLiner, boolean previousOneLiner) {
         if (getIndent() == 0) {
             Logger.error("Indent is 0! That doesn't seem right...");
         }
 
         StringBuilder string = new StringBuilder();
 
-        if (hasComment() && getCommentLocation() == COMMENTLOCATION.BEFORE) {
-            string.append(StringUtils.repeat("\t", getIndent())).append("# ").append(getComment()).append("\n");
+        String lineEnd = " ";
+        String tabs = "";
+
+        if (!parentOneLiner && !isOneLiner()) {
+            lineEnd = "\n";
         }
 
-        string.append(getContentToString());
+        if (!parentOneLiner) {
+            tabs = StringUtils.repeat("\t", getIndent());
+        }
+
+        if (hasComment() && getCommentLocation() == COMMENTLOCATION.BEFORE) {
+            string.append(tabs).append("# ").append(getComment()).append(lineEnd);
+        }
+
+        /* We only want to apply tabs to inner items if this is not a one liner */
+        string.append(getInnerContent(parentOneLiner, previousOneLiner));
 
         if (hasComment() && getCommentLocation() == COMMENTLOCATION.AFTER) {
-            string.append(StringUtils.repeat("\t", getIndent())).append(" # ").append(getComment());
+            string.append(" # ").append(getComment());
         }
 
-        string.append("\n");
-
         return string.toString();
+    }
+
+    public String toString() {
+        /* By default, we want tabs and a newline for the outside-most item */
+        return getContentToString(false, false);
     }
 }

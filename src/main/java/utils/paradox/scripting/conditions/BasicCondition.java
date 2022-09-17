@@ -42,6 +42,8 @@ public abstract class BasicCondition extends ScriptItem {
     protected static Map<ITEMSCOPE, Set<String>> validConditions = new HashMap<>();
     protected static Map<ITEMSCOPE, Set<String>> validConditionScopes = new HashMap<>();
 
+    public BasicCondition() {}
+
     public BasicCondition(Node node) {
         super(node);
     }
@@ -92,10 +94,15 @@ public abstract class BasicCondition extends ScriptItem {
 
     protected abstract Map<ITEMSCOPE, Set<String>> getCorrectConditionMap();
 
+    protected abstract boolean isOneLiner();
+
+//    @Override
+//    protected boolean validateName(String name) {
+//        return getScopeOfItem(name) != null;
+//    }
+    // TODO: Fix validation
     @Override
-    protected boolean validateName(String name) {
-        return getScopeOfItem(name) != null;
-    }
+    protected boolean validateName(String name) { return true; }
 
     protected ITEMSCOPE getScopeOfItem(String value) {
         Map<ITEMSCOPE, Set<String>> itemscopeToValidNames = getCorrectConditionMap();

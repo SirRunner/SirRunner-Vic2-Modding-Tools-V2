@@ -9,6 +9,8 @@ import java.util.Set;
 public class Condition extends BasicCondition {
     protected String value;
 
+    public Condition() {}
+
     public Condition(Node node) {
         super(node);
 
@@ -35,7 +37,28 @@ public class Condition extends BasicCondition {
     }
 
     @Override
-    protected String getContentToString() {
-        return StringUtils.repeat("\t", getIndent()) + getName() + " = " + getValue();
+    protected boolean isOneLiner() {
+        return true;
+    }
+
+    @Override
+    public boolean isOneLiner(boolean isParentOneLiner) {
+        return isParentOneLiner;
+    }
+
+    @Override
+    protected String getInnerContent(boolean parentOneLiner, boolean previousOneLiner) {
+        String tabs = "";
+        String lineEnd = " ";
+
+        if (!parentOneLiner) {
+            lineEnd = "\n";
+        }
+
+        if (!previousOneLiner || !parentOneLiner) {
+            tabs = StringUtils.repeat("\t", getIndent());
+        }
+
+        return tabs + getName() + " = " + getValue() + lineEnd;
     }
 }

@@ -10,6 +10,10 @@ public class Picture extends DecisionPart {
         // TODO: Finish implementation
     }
 
+    public Picture(String value) {
+        this.value = value;
+    }
+
     public String getValue() {
         return value;
     }

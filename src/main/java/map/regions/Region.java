@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Region {
     protected String code;
@@ -69,6 +70,10 @@ public class Region {
         return provinces;
     }
 
+    public List<Integer> getProvincesInOrder() {
+        return provinces.stream().sorted().collect(Collectors.toList());
+    }
+
     public void setProvinces(Set<Integer> provinces) {
         this.provinces = provinces;
     }
@@ -96,6 +101,15 @@ public class Region {
         }
 
         provinces.add(provinceId);
+    }
+
+    public int getLowestProvinceId() {
+        if (this.provinces == null) {
+            Logger.error("Region.getLowestProvinceId() called before provinces were defined");
+            return 0;
+        }
+
+        return Collections.min(this.provinces);
     }
 
     public String getName() {

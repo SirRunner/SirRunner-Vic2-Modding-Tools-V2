@@ -34,6 +34,9 @@ public abstract class BasicEffect extends ScriptItem {
     protected enum VALIDPOPEFFECTSCOPES {
     }
 
+    public BasicEffect() {
+    }
+
     public BasicEffect(Node node) {
         super(node);
     }
@@ -87,9 +90,16 @@ public abstract class BasicEffect extends ScriptItem {
 
     protected abstract Map<ITEMSCOPE, Set<String>> getCorrectEffectMap();
 
+    protected abstract boolean isOneLiner();
+
+    //    @Override
+//    protected boolean validateName(String name) {
+//        return getScopeOfItem(name) != null;
+//    }
+// TODO: Fix validation
     @Override
     protected boolean validateName(String name) {
-        return getScopeOfItem(name) != null;
+        return true;
     }
 
     protected ITEMSCOPE getScopeOfItem(String value) {

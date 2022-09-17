@@ -39,6 +39,10 @@ public class Allow extends DecisionPart {
         return conditions;
     }
 
+    public boolean isEmpty() {
+        return conditions.isEmpty();
+    }
+
     public void setConditions(List<BasicCondition> conditions) {
         for (BasicCondition condition : conditions) {
             addCondition(condition);
