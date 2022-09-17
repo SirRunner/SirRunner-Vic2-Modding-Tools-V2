@@ -406,6 +406,11 @@ public class RenamingDecisionGenerator {
             outerAndCondition.addCondition(ownsProvince);
         }
 
+        /* If we have no changes, don't make the decision */
+        if (randomOwnedScopes.isEmpty()) {
+            return;
+        }
+
         Decision decision = getDecisionForRegionRenaming(politicalDecisions, regionRenaming);
 
         BasicCondition outerOrBlock = getOuterOrBlock(decision);

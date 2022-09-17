@@ -18,7 +18,7 @@ public class RenamingDecisionWriter {
     }
 
     public void writeFile() {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.ISO_8859_1))) {
             for (String name : pdRegionToPoliticalDecisions.keySet()) {
                 writer.write(pdRegionToPoliticalDecisions.get(name).toString());
             }
