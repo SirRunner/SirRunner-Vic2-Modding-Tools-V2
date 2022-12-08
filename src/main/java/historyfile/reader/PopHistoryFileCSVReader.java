@@ -145,6 +145,14 @@ public class PopHistoryFileCSVReader extends BaseReader {
             double percentageOfProvince = breakdown.getPercentageOfProvince();
 
             for (String culture : breakdown.getCulturePercentOfPop().keySet()) {
+                String religion = CultureToReligion.getRaceForCulture(culture);
+
+                /* If the culture is not in CultureToReligion, let the user know and default to men */
+                if (StringUtils.isEmpty(religion)) {
+                    Logger.error("Unable to find race (religion) for " + culture + ". Defaulting to 'men'");
+                    religion = "men";
+                }
+
                 double culturePercentageOfPop = breakdown.getCulturePercentOfPop().get(culture);
 
                 double totalInPop = totalPop * percentageOfProvince * culturePercentageOfPop;
@@ -153,7 +161,7 @@ public class PopHistoryFileCSVReader extends BaseReader {
 
                 pop.setType(poptype);
                 pop.setCulture(culture);
-                pop.setReligion(CultureToReligion.getRaceForCulture(culture));
+                pop.setReligion(religion);
                 pop.setSize(totalInPop);
 
                 popHistory.addPop(pop);
