@@ -61,6 +61,7 @@ public enum CultureToReligion {
     GUNDABAD_ORC("orc"),
     SNOW_ORC("orc"),
     ANGMAR_ORC("orc"),
+    WHITE_MOUNTAIN_GOBLIN("orc"),
     SHIRE_HOBBIT("hobbit"),
     BREELAND_HOBBIT("hobbit"),
     STOOR_HOBBIT("hobbit"),

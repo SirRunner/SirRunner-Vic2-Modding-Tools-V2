@@ -125,6 +125,11 @@ public class PopHistoryFileCSVReader extends BaseReader {
                     }
                 }
 
+                if (Math.abs(breakdown.getPercentageSumOfBreakdown() - 1.0) > error) {
+                    double test = Math.abs(breakdown.getPercentageSumOfBreakdown() - 1.0);
+                    Logger.error("Sum of pop culture breakdown != 100 %: " + cultureBreakdown);
+                }
+
                 popTypetoPopBreakdown.put(key, breakdown);
             }
         }
@@ -232,6 +237,16 @@ public class PopHistoryFileCSVReader extends BaseReader {
             }
 
             culturePercentOfPop.put(culture, percentage);
+        }
+
+        public double getPercentageSumOfBreakdown() {
+            double sum = 0.0;
+
+            for (String culture: culturePercentOfPop.keySet()) {
+                sum += culturePercentOfPop.get(culture);
+            }
+
+            return sum;
         }
     }
 }
