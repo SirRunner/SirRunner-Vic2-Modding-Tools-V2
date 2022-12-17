@@ -127,7 +127,7 @@ public class PopHistoryFileCSVReader extends BaseReader {
 
                 if (Math.abs(breakdown.getPercentageSumOfBreakdown() - 1.0) > error) {
                     double test = Math.abs(breakdown.getPercentageSumOfBreakdown() - 1.0);
-                    Logger.error("Sum of pop culture breakdown != 100 %: " + cultureBreakdown);
+                    Logger.error(line.get(PopHistoryFile.ID) + ": sum of " + key + " breakdown != 100%: " + cultureBreakdown);
                 }
 
                 popTypetoPopBreakdown.put(key, breakdown);
