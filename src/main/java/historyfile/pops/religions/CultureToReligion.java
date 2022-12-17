@@ -36,6 +36,7 @@ public enum CultureToReligion {
     DRUEDAIN("men"),
     WILDMEN("men"),
     DUNNISH("men"),
+    DUNIR("men"),
     ENEDWAITHRIM("men"),
     ROHIRRIM("men"),
     ANGMARRIM("men"),
