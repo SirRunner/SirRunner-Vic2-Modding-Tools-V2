@@ -2,10 +2,8 @@ package decisions.renaming;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class RegionRenaming {
     // TODO: Region
@@ -18,6 +16,8 @@ public class RegionRenaming {
     protected String startingCulture;
 
     protected Map<String, String> cultureGroupToName = null;
+
+    protected String localizationName = "";
 
     public static final String ID = "id";
     public static final String STARTING_NAME = "starting_name";
@@ -138,11 +138,19 @@ public class RegionRenaming {
     }
 
     public String getLocalizationName() {
-        return getDecisionName() + "_title;Rename " + StringUtils.capitalize(getDecisionRegion()) + ";x\n";
+        return getDecisionName() + "_title;Rename " + getDecisionRegionLocalization() + ";x\n";
+    }
+
+    protected String getDecisionRegionLocalization() {
+        if (StringUtils.isEmpty(localizationName)) {
+            localizationName = Arrays.stream(getDecisionRegion().split("_")).map(StringUtils::capitalize).collect(Collectors.joining(" "));
+        }
+
+        return localizationName;
     }
 
     public String getLocalizationDesc() {
-        return getDecisionName() + "_desc;" + "A section of " + StringUtils.capitalize(getDecisionRegion()) + " has fallen under our control. We have alternative names for select provinces and states in the region. Let's use them.;x\n";
+        return getDecisionName() + "_desc;" + "A section of " + getDecisionRegionLocalization() + " has fallen under our control. We have alternative names for select provinces and states in the region. Let's use them.;x\n";
     }
 
     @Override

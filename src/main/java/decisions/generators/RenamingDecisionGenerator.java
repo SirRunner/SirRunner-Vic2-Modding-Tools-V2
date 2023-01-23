@@ -487,7 +487,7 @@ public class RenamingDecisionGenerator {
         /* Write the decision localisation file */
         try (BufferedWriter localisationWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(decisionLocalizationOutfile), StandardCharsets.UTF_8))) {
             for (String decisionName : decisionRegionToLocalization.keySet()) {
-                for (String localization: decisionRegionToLocalization.get(decisionName)) {
+                for (String localization : decisionRegionToLocalization.get(decisionName)) {
                     localisationWriter.write(localization);
                 }
             }
