@@ -30,6 +30,8 @@ public enum CultureToReligion {
     DORWINRIM("men"),
     EHWATHRIM("men"),
     BARDING("men"),
+    GRAMMAS("men"),
+    RIVERMEN("men"),
     WOODSMEN("men"),
     BEORNING("men"),
     ANDUINMEN("men"),
