@@ -1,5 +1,6 @@
 package historyfile.generators;
 
+import historyfile.province.BaseProvinceHistoryFile;
 import historyfile.province.ProvinceHistoryFile;
 import historyfile.reader.ProvinceHistoryFileCSVReader;
 import historyfile.writer.ProvinceHistoryFileWriter;
@@ -7,6 +8,8 @@ import map.definitions.MapDefinitions;
 import map.reader.MapDefinitionsReader;
 import map.reader.RegionReader;
 import map.regions.Region;
+import map.writer.ClimatesWriter;
+import map.writer.ContinentsWriter;
 import map.writer.MapLocalisationWriter;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
@@ -14,6 +17,7 @@ import utils.Utils;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProvinceHistoryFileGenerator {
     protected String provinceHistoryFolder;
@@ -21,6 +25,8 @@ public class ProvinceHistoryFileGenerator {
     protected String csvFilename;
     protected String definitionsFilename;
     protected String regionsFilename;
+    protected String continentsFilename;
+    protected String climatesFilename;
 
     public void setProvinceHistoryFolder(String provinceHistoryFolder) {
         this.provinceHistoryFolder = provinceHistoryFolder;
@@ -40,6 +46,14 @@ public class ProvinceHistoryFileGenerator {
 
     public void setRegionsFilename(String filename) {
         this.regionsFilename = filename;
+    }
+
+    public void setContinentsFilename(String continentsFilename) {
+        this.continentsFilename = continentsFilename;
+    }
+
+    public void setClimatesFilename(String climatesFilename) {
+        this.climatesFilename = climatesFilename;
     }
 
     protected void compareDefinitionsAndCSVEntryNames(MapDefinitions definitionsEntry, ProvinceHistoryFile historyFile, int id) {
@@ -125,6 +139,16 @@ public class ProvinceHistoryFileGenerator {
 
         MapLocalisationWriter mapLocalisationWriter = new MapLocalisationWriter(mapLocalisationFilename, mapDefinitions, regions);
         mapLocalisationWriter.writeFile();
+
+        /* Gets just the province history file information in id order */
+        List<ProvinceHistoryFile> orderedProvinceHistoryFiles = provinceHistoryFiles.keySet().stream().map(provinceHistoryFiles::get).collect(Collectors.toList());
+        orderedProvinceHistoryFiles.sort(Comparator.comparingInt(BaseProvinceHistoryFile::getId));
+
+        ContinentsWriter continentsWriter = new ContinentsWriter(continentsFilename, orderedProvinceHistoryFiles);
+        continentsWriter.writeFile();
+
+        ClimatesWriter climatesWriter = new ClimatesWriter(climatesFilename, orderedProvinceHistoryFiles);
+        climatesWriter.writeFile();
     }
 
     public static void main(String[] args) {
@@ -136,6 +160,8 @@ public class ProvinceHistoryFileGenerator {
             generator.setCsvFilename(System.getProperty("user.home") + "/Downloads/Provinces - Provinces.csv");
             generator.setDefinitionsFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/definition.csv");
             generator.setRegionsFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/region.txt");
+            generator.setContinentsFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/continent.txt");
+            generator.setClimatesFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/climate.txt");
 
             generator.run();
         } catch (Exception e) {
