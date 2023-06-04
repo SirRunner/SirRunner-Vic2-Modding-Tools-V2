@@ -500,9 +500,9 @@ public class RenamingDecisionGenerator {
         try {
             RenamingDecisionGenerator generator = new RenamingDecisionGenerator();
 
-            generator.setProvinceCSVFilename("C:\\Users\\Harrison Greene\\Downloads\\Provinces - Renaming (Province).csv");
+            generator.setProvinceCSVFilename(System.getProperty("user.home") + "/Downloads/Provinces - Renaming (Province).csv");
             generator.setRegionsFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/region.txt");
-            generator.setRegionsCSVFilename("C:\\Users\\Harrison Greene\\Downloads\\Provinces - Renaming (Region).csv");
+            generator.setRegionsCSVFilename(System.getProperty("user.home") + "/Downloads/Provinces - Renaming (Region).csv");
             generator.setOutputFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/decisions/Renaming.txt");
 
             Path source = Paths.get(Paths.get(System.getProperty("user.dir")).toString(), "src", "main", "java", "decisions", "generators");
