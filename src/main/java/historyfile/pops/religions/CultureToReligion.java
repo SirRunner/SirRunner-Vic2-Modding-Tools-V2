@@ -32,6 +32,7 @@ public enum CultureToReligion {
     BARDING("men"),
     GRAMMAS("men"),
     RIVERMEN("men"),
+    ADHALLING("men"),
     WOODSMEN("men"),
     BEORNING("men"),
     ANDUINMEN("men"),
