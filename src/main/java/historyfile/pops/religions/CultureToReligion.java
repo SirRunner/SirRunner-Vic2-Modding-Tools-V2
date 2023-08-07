@@ -69,6 +69,7 @@ public enum CultureToReligion {
     SHIRE_HOBBIT("hobbit"),
     BREELAND_HOBBIT("hobbit"),
     STOOR_HOBBIT("hobbit"),
+    BUCKLAND_HOBBIT("hobbit"),
     CAVE_TROLLS("troll"),
     HILL_TROLLS("troll"),
     MOUNTAIN_TROLLS("troll"),
