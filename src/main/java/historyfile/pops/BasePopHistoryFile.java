@@ -58,6 +58,11 @@ public abstract class BasePopHistoryFile {
         pops.sort(Comparator.comparing(PopHistoryPop::getType));
 
         for (PopHistoryPop pop : pops) {
+
+            if (pop.getSize() == 0) {
+                continue;
+            }
+
             builder.append(pop.toString());
         }
 
