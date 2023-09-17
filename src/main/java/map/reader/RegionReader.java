@@ -127,7 +127,7 @@ public class RegionReader extends BaseReader {
             while (line != null) {
 
                 if (line.trim().startsWith("#")) {
-                    Logger.info("Ignore line: \"" + line + "\"");
+                    Logger.info("Ignoring line: \"" + line + "\"");
                 } else {
                     Region region = getRegion(line);
 
