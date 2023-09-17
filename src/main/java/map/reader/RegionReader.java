@@ -3,8 +3,8 @@ package map.reader;
 import map.regions.Region;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
-import utils.paradox.parsing.ParadoxParsingUtils;
 import utils.baseclasses.BaseReader;
+import utils.paradox.parsing.ParadoxParsingUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -125,10 +125,15 @@ public class RegionReader extends BaseReader {
             String line = reader.readLine();
 
             while (line != null) {
-                Region region = getRegion(line);
 
-                if (region != null) {
-                    updateRegion(line, codeToRegions, region);
+                if (line.trim().startsWith("#")) {
+                    Logger.info("Ignore line: \"" + line + "\"");
+                } else {
+                    Region region = getRegion(line);
+
+                    if (region != null) {
+                        updateRegion(line, codeToRegions, region);
+                    }
                 }
 
                 line = reader.readLine();
