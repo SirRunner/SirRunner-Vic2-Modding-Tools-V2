@@ -82,7 +82,10 @@ public enum CultureToReligion {
     RAVEN("eagle"),
     GREAT_SPIDER("spider"),
     WIGHT("undead"),
-    OATHBREAKER("undead");
+    OATHBREAKER("undead"),
+    DOURHAND("dwarven"),
+    BLUE_MOUNTAIN_GOBLIN("orc"),
+    SIREDAIN("men");
 
     private String race;
     private static Map<String, String> cultureToRaceCache = new HashMap<>();
