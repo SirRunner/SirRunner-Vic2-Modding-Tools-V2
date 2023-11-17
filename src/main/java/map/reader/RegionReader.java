@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,13 +124,18 @@ public class RegionReader extends BaseReader {
             Logger.info("Reading regions from " + file.getName());
 
             String line = reader.readLine();
+            String appendLine = "";
 
             while (line != null) {
 
-                if (line.trim().startsWith("#")) {
+                if (line.trim().startsWith("#") || line.isEmpty()) {
                     Logger.info("Ignoring line: \"" + line + "\"");
+
+                    if (line.trim().startsWith("# SirRunner Generator Apply")) {
+                        appendLine = line.split("\"")[line.split("\"").length - 1];
+                    }
                 } else {
-                    Region region = getRegion(line);
+                    Region region = getRegion(line + appendLine);
 
                     if (region != null) {
                         updateRegion(line, codeToRegions, region);
