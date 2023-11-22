@@ -9,7 +9,8 @@ import java.util.Set;
 public class Effect extends BasicEffect {
     protected String value;
 
-    public Effect() {}
+    public Effect() {
+    }
 
     public Effect(Node node) {
         super(node);
@@ -38,6 +39,11 @@ public class Effect extends BasicEffect {
 
     @Override
     protected boolean isOneLiner() {
+
+        if (getOneLineOverride() != null) {
+            return getOneLineOverride();
+        }
+
         return true;
     }
 

@@ -11,6 +11,15 @@ import java.util.Map;
 import java.util.Set;
 
 public abstract class BasicEffect extends ScriptItem {
+    Boolean oneLineOverride = null;
+
+    public Boolean getOneLineOverride() {
+        return oneLineOverride;
+    }
+
+    public void setOneLineOverride(Boolean oneLineOverride) {
+        this.oneLineOverride = oneLineOverride;
+    }
     // TODO: Handle keywords in effects (such as name)
     protected enum VALIDCOUNTRYEFFECTS {
         COUNTRY_EVENT,

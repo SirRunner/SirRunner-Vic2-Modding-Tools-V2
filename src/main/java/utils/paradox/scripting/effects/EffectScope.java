@@ -92,11 +92,19 @@ public class EffectScope extends BasicEffect {
 
     @Override
     protected boolean isOneLiner() {
+        if (getOneLineOverride() != null) {
+            return getOneLineOverride();
+        }
+
         if (getEffects().isEmpty()) {
             return true;
         }
 
         if (getEffects().size() == 1) {
+            if (getLimit() != null) {
+                return false;
+            }
+
             /* Effects will assume that they are a one liner. Scopes will not do anything special */
             return getEffects().get(0).isOneLiner(true);
         }
