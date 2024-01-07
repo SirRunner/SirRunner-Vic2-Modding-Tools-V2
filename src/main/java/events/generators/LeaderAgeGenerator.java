@@ -250,10 +250,10 @@ public class LeaderAgeGenerator {
 
         EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
 
-        String text = "\"§Y" + leaderAgeConfiguration.getText() + "§! is currently §Y" + age + "§! years old§I\"";
+        String text = "\"§T" + leaderAgeConfiguration.getText() + "§! is currently §T" + age + "§! years old§I\"";
 
         if (age == -1) {
-            text = "\"§Y" + leaderAgeConfiguration.getText() + "§! has not yet been born§I\"";
+            text = "\"§T" + leaderAgeConfiguration.getText() + "§! has not yet been born§I\"";
         }
 
         Effect changeRegionName = ScriptingUtils.getEffect("change_region_name", text);
@@ -281,7 +281,7 @@ public class LeaderAgeGenerator {
         Condition nextMonth = ScriptingUtils.getCondition("month", Integer.toString(monthInt));
 
         EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
-        Effect changeRegionName = ScriptingUtils.getEffect("change_region_name", "\"§Y" + configuration.getText() + "§! was born in §Y" + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) +"§! of §YTA " + year + "§!§I\"");
+        Effect changeRegionName = ScriptingUtils.getEffect("change_region_name", "\"§T" + configuration.getText() + "§! was born in §T" + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) +"§! of §TTA " + year + "§!§I\"");
 
         notYear.addCondition(nextYear);
         notMonth.addCondition(nextMonth);
@@ -319,7 +319,7 @@ public class LeaderAgeGenerator {
         Condition nextMonth = ScriptingUtils.getCondition("month", Integer.toString(monthInt));
 
         EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
-        Effect changeRegionName = ScriptingUtils.getEffect("change_region_name", "\"§Y" + configuration.getText() + "§! died in §Y" + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) +"§! of §YTA " + year + "§!§I\"");
+        Effect changeRegionName = ScriptingUtils.getEffect("change_region_name", "\"§T" + configuration.getText() + "§! died in §T" + month.getDisplayName(TextStyle.FULL, Locale.ENGLISH) +"§! of §TTA " + year + "§!§I\"");
 
         notYear.addCondition(nextYear);
         notMonth.addCondition(nextMonth);

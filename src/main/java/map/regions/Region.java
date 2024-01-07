@@ -11,6 +11,7 @@ public class Region {
     // TODO: Province objects?
     protected Set<Integer> provinces;
     protected String name;
+    protected String comment;
 
     public static final String CODE = "code";
     public static final String PROVINCES = "provinces";
@@ -118,5 +119,31 @@ public class Region {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void appendComment(String comment) {
+        if (StringUtils.isEmpty(comment)) {
+            return;
+        }
+
+        if (StringUtils.isEmpty(this.comment)) {
+            setComment(comment);
+            return;
+        }
+
+        this.comment += comment;
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return getCode() + " = { " + StringUtils.join(getProvincesInOrder().toArray(), " ") + " }";
     }
 }

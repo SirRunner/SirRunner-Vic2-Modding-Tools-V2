@@ -14,6 +14,7 @@ public class MapDefinitions {
     protected int id;
     protected Color color;
     protected String name;
+    protected String comment;
     // TODO: Province object?
 
     private String redValue = null;
@@ -132,5 +133,13 @@ public class MapDefinitions {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }
