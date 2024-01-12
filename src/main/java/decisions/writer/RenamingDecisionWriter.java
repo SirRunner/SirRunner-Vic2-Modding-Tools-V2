@@ -19,6 +19,9 @@ public class RenamingDecisionWriter {
 
     public void writeFile() {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.ISO_8859_1))) {
+            writer.write("# Remove this line to have the validator check that ORs have more than one condition and that interior arguments are correct\n");
+            writer.write("# Audax Validator \"!\" Ignore_1002\n");
+            writer.write("# Audax Validator \"!\" Ignore_1009\n");
             for (String name : pdRegionToPoliticalDecisions.keySet()) {
                 writer.write(pdRegionToPoliticalDecisions.get(name).toString());
             }

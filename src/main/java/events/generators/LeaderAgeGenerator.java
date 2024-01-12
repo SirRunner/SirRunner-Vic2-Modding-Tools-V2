@@ -194,6 +194,8 @@ public class LeaderAgeGenerator {
         }
 
         try (FileWriter writer = new FileWriter(getEventsFilename(), Charset.forName("windows-1252"))) {
+            writer.write ("# Remove this line to have the validator check for strings in localisation\n");
+            writer.write("# Audax Validator \"!\" Ignore_1004\n");
             for (Event event : events) {
                 writer.write(event.toString());
             }
