@@ -10,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,7 +85,7 @@ public class RegionReader extends BaseReader {
     }
 
     protected void checkRegion(Region region) {
-        if (region.getProvinces().isEmpty()) {
+        if (region.getProvinces().isEmpty() && !region.isLocRegion()) {
             printLoggerError(region.getCode(), "assigned province");
         }
 

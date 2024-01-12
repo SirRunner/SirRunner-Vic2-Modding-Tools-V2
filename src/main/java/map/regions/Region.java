@@ -28,7 +28,7 @@ public class Region {
     public Region(Map<String, String> line) {
         this();
 
-        for (String key: line.keySet()) {
+        for (String key : line.keySet()) {
             if (!HANDLED_COLUMNS.contains(key)) {
                 Logger.info("File contains unhandled key: " + key);
             } else {
@@ -41,7 +41,7 @@ public class Region {
     }
 
     public void setByName(String name, String value) {
-        switch(name) {
+        switch (name) {
             case CODE -> setCode(value);
             case PROVINCES -> setProvinces(value);
             case NAME -> setName(value);
@@ -53,10 +53,15 @@ public class Region {
 
         if (StringUtils.isNumeric(codeParts[1])) {
             return Integer.parseInt(codeParts[1]);
-        } else {
+        } else if (!isLocRegion()) {
             Logger.error("Province id part of " + getCode() + " is not numeric");
-            return 0;
         }
+
+        return 0;
+    }
+
+    public boolean isLocRegion() {
+        return StringUtils.endsWith(getCode(), "_loc") || StringUtils.contains(getCode(), "_loc_");
     }
 
     public String getCode() {
