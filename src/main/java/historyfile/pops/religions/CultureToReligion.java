@@ -10,7 +10,6 @@ public enum CultureToReligion {
     DUNEDAIN("men"),
     GONDORIAN("men"),
     AMROTHIAN("men"),
-    ARNORIAN("men"),
     UMBARRIM("men"),
     HARNENDAN("men"),
     HARUZANI("men"),
@@ -64,12 +63,7 @@ public enum CultureToReligion {
     GOBLIN_TOWNER("orc"),
     GUNDABAD_ORC("orc"),
     SNOW_ORC("orc"),
-    ANGMAR_ORC("orc"),
     WHITE_MOUNTAIN_GOBLIN("orc"),
-    SHIRE_HOBBIT("hobbit"),
-    BREELAND_HOBBIT("hobbit"),
-    STOOR_HOBBIT("hobbit"),
-    BUCKLAND_HOBBIT("hobbit"),
     CAVE_TROLLS("troll"),
     HILL_TROLLS("troll"),
     MOUNTAIN_TROLLS("troll"),
@@ -85,10 +79,22 @@ public enum CultureToReligion {
     OATHBREAKER("undead"),
     DOURHAND("dwarven"),
     BLUE_MOUNTAIN_GOBLIN("orc"),
-    SIREDAIN("men");
+    SIREDAIN("men"),
+    MARSHMEN("men"),
+    ISENMEN("men"),
+    ARTHEDANI("men"),
+    CARDOLANDRIM("men"),
+    HAERANEDAIN("men"),
+    SHORNBEARD("dwarven"),
+    HOLLIN_FOLK("men"),
+    SAERLANNER("men"),
+    GRAM_GOBLIN("orc"),
+    STOOR("hobbit"),
+    HARFOOT("hobbit"),
+    FALLOHIDE("hobbit");
 
-    private String race;
-    private static Map<String, String> cultureToRaceCache = new HashMap<>();
+    private final String race;
+    private static final Map<String, String> cultureToRaceCache = new HashMap<>();
 
     CultureToReligion(String race) {
         this.race = race;

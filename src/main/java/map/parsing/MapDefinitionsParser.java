@@ -4,23 +4,25 @@ import map.definitions.MapDefinitions;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 import utils.baseclasses.BaseReader;
+import utils.paradox.parsing.ParadoxParsingUtils;
 
 import java.awt.*;
 import java.io.File;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.*;
 
 public class MapDefinitionsParser extends BaseReader {
 
-    public static final char DELIMITER = ';';
-    public static final char COMMENT_START = '#';
-
     protected Set<Color> usedColors;
+
+    protected static final short RGB_MAX_NUMBER = 255;
 
     public MapDefinitionsParser(File file) {
         super(file);
         usedColors = new HashSet<>();
+        skipHeader = true; // The map definitions is one of the few files that has to come with a header
     }
 
     public Set<Color> getUsedColors() {
@@ -35,7 +37,8 @@ public class MapDefinitionsParser extends BaseReader {
 
         Map<Integer, MapDefinitions> idToMapDefinitions = new HashMap<>();
 
-        List<String> lines = Files.readAllLines(getFile().toPath());
+        System.out.println(getFile());
+        List<String> lines = Files.readAllLines(getFile().toPath(), Charset.forName("windows-1252"));
 
         for (String line : lines) {
             parseLine(line, idToMapDefinitions);
@@ -47,6 +50,17 @@ public class MapDefinitionsParser extends BaseReader {
     protected void parseLine(String line, Map<Integer, MapDefinitions> idToMapDefinitions) {
 
         List<String> tokens = getTokens(line);
+
+        /* The game doesn't do things with commented-out lines */
+        if (StringUtils.isNotEmpty(line) && line.startsWith(ParadoxParsingUtils.COMMENT_START)) {
+            return;
+        }
+
+        /* The header line gets ignored. To ensure that only the first line is skipped, disabling the header check */
+        if (skipHeader) {
+            skipHeader = false;
+            return;
+        }
 
         List<String> errors = getErrors(tokens, idToMapDefinitions);
 
@@ -82,14 +96,14 @@ public class MapDefinitionsParser extends BaseReader {
             }
 
             switch (character) {
-                case DELIMITER -> {
+                case ParadoxParsingUtils.DELIMITER_CHAR -> {
                     if (!currentToken.isEmpty()) {
                         tokens.add(currentToken.toString());
                     }
 
                     currentToken = new StringBuilder();
                 }
-                case COMMENT_START -> {
+                case ParadoxParsingUtils.COMMENT_START_CHAR -> {
                     if (!currentToken.isEmpty()) {
                         tokens.add(currentToken.toString());
                     }
@@ -140,8 +154,8 @@ public class MapDefinitionsParser extends BaseReader {
         } else if (!StringUtils.isNumeric(red)) {
             errors.add("Red color input " + red + " has more characters than just numbers");
             checkColors = false;
-        } else if (Integer.parseInt(red) > 255) {
-            errors.add("Red color " + red + " exceeds the maximum allow value (255)");
+        } else if (Integer.parseInt(red) > RGB_MAX_NUMBER) {
+            errors.add("Red color " + red + " exceeds the maximum allow value (" + RGB_MAX_NUMBER + ")");
             checkColors = false;
         }
 
@@ -151,8 +165,8 @@ public class MapDefinitionsParser extends BaseReader {
         } else if (!StringUtils.isNumeric(green)) {
             errors.add("Green color input " + green + " has more characters than just numbers");
             checkColors = false;
-        } else if (Integer.parseInt(green) > 255) {
-            errors.add("Green color " + green + " exceeds the maximum allow value (255)");
+        } else if (Integer.parseInt(green) > RGB_MAX_NUMBER) {
+            errors.add("Green color " + green + " exceeds the maximum allow value (" + RGB_MAX_NUMBER + ")");
             checkColors = false;
         }
 
@@ -162,8 +176,8 @@ public class MapDefinitionsParser extends BaseReader {
         } else if (!StringUtils.isNumeric(blue)) {
             errors.add("Blue color input " + blue + " has more characters than just numbers");
             checkColors = false;
-        } else if (Integer.parseInt(blue) > 255) {
-            errors.add("Blue color " + blue + " exceeds the maximum allow value (255)");
+        } else if (Integer.parseInt(blue) > RGB_MAX_NUMBER) {
+            errors.add("Blue color " + blue + " exceeds the maximum allow value (" + RGB_MAX_NUMBER + ")");
             checkColors = false;
         }
 
@@ -205,7 +219,7 @@ public class MapDefinitionsParser extends BaseReader {
         GREEN,
         BLUE,
         NAME,
-        X,
+        X, // intentionally not used
         COMMENT;
 
         protected static String getPart(PART part, List<String> tokens) {

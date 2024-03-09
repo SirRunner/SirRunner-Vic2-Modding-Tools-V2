@@ -112,7 +112,7 @@ public class DefinitionsValidator {
     public static void main(String[] args) throws Exception {
         DefinitionsValidator validator = new DefinitionsValidator();
 
-        validator.setModDirectory("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\Ashan");
+        validator.setModDirectory("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA");
 
         validator.run();
     }

@@ -4,6 +4,7 @@ import java.io.File;
 
 public abstract class BaseReader {
     protected File file;
+    protected boolean skipHeader = false;
 
     public BaseReader() {}
 

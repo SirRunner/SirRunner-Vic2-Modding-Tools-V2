@@ -81,6 +81,9 @@ public class PopHistoryFileCSVReader extends BaseReader {
             } else if (StringUtils.endsWith(key, PopHistoryFile.BREAKDOWN_SUFFIX)) {
                 /* Handled when the poptype's main column is processed */
                 continue;
+            } else if (StringUtils.equalsIgnoreCase(key, PopHistoryFile.TAG)) {
+                /* tag is not currently stored anywhere */
+                continue;
             } else if (!line.containsKey(key + PopHistoryFile.BREAKDOWN_SUFFIX)) {
                 Logger.error("Pop " + key + " listed with no breakdown column");
             } else {
@@ -242,7 +245,7 @@ public class PopHistoryFileCSVReader extends BaseReader {
         public double getPercentageSumOfBreakdown() {
             double sum = 0.0;
 
-            for (String culture: culturePercentOfPop.keySet()) {
+            for (String culture : culturePercentOfPop.keySet()) {
                 sum += culturePercentOfPop.get(culture);
             }
 

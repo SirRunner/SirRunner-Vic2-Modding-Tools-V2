@@ -8,6 +8,7 @@ import java.util.Set;
 public class PopHistoryFile extends BasePopHistoryFile {
     public static final String ID = "id";
     public static final String NAME = "name";
+    public static final String TAG = "tag";
     public static final String TOTAL_POP = "total_pop";
     public static final String FILENAME = "filename";
     public static final String BREAKDOWN_SUFFIX = "_breakdown";

@@ -15,6 +15,9 @@ public class ParadoxParsingUtils {
     public static final String LOCALISATION_SPLITTER = ";";
     public static final String LOCALISATION_ENDLINE = "x";
 
+    public static final char COMMENT_START_CHAR = '#';
+    public static final char DELIMITER_CHAR = ';';
+
     public static final List<String> KEYWORD_CHARACTERS = Arrays.asList(DEFINES, OPEN_BLOCK, CLOSE_BLOCK, COMMENT_START);
     public static final List<String> NON_COMMENT_KEYWORDS = Arrays.asList(DEFINES, OPEN_BLOCK, CLOSE_BLOCK);
 }
