@@ -102,7 +102,8 @@ public class PopHistoryFileCSVReader extends BaseReader {
                         breakdown.setPercentageOfProvince(percentage);
                         totalUsed += percentage;
                     } catch (Exception e) {
-                        Logger.error("Given percentage is not a number: " + value);
+                        Logger.error("Error parsing line: " + line);
+                        Logger.error("\tGiven percentage is not a number: " + value);
                         continue;
                     }
                 }
