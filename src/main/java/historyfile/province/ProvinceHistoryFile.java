@@ -59,7 +59,7 @@ public class ProvinceHistoryFile extends BaseProvinceHistoryFile {
             case TRADE_GOODS -> setTradeGoods(value);
             case LIFE_RATING -> setLifeRating(value);
             case TERRAIN -> setTerrain(value);
-            case CONTINENT -> setContinent(value);
+            case CONTINENT -> setContinent(value, true);
             case CLIMATE -> setClimate(value);
             case RAILROAD -> setRailroadLevel(value);
             case FORT -> setFortLevel(value);

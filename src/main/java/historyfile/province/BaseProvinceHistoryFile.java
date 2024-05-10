@@ -1,6 +1,8 @@
 package historyfile.province;
 
+import historyfile.province.continents.RegionToContinent;
 import org.apache.commons.lang3.StringUtils;
+import utils.Logger;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -125,6 +127,25 @@ public abstract class BaseProvinceHistoryFile {
 
     public void setContinent(String continent) {
         this.continent = continent;
+    }
+
+    public void setContinent(String continent, boolean convertToStandard) {
+
+        if (convertToStandard) {
+            RegionToContinent.Continent convertedContinent = RegionToContinent.getRegionToContinent(continent);
+
+            if (convertedContinent == null) {
+                Logger.error("Unable to find mapping for continent: " + continent);
+                return;
+            }
+
+            setContinent(StringUtils.toRootLowerCase(convertedContinent.name()));
+
+            return;
+        }
+
+        setContinent(continent);
+
     }
 
     public String getClimate() {
