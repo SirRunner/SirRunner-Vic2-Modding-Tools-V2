@@ -105,8 +105,21 @@ public class DefinitionsValidator {
 
         if (!extraMapColors.isEmpty()) {
             Logger.error("The following colors are not defined, but on the province map:");
-            extraMapColors.forEach(color -> System.out.println("\t" + color));
+            extraMapColors.forEach(color -> {
+                System.out.println("\t" + color);
+
+                /* Debugging where the colors are */
+                for (int x = 0; x < img.getWidth(); x++) {
+                    for (int y = 0; y < img.getHeight(); y++) {
+                        if (color.equals(new Color(img.getRGB(x, y)))) {
+                            System.out.println(x + ", " + y);
+                        }
+                    }
+                }
+            });
         }
+
+        Logger.info("Done validating");
     }
 
     public static void main(String[] args) throws Exception {
