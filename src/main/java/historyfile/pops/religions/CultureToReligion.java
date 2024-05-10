@@ -27,7 +27,9 @@ public enum CultureToReligion {
     KUGA("men"),
     LOGATH("men"),
     DORWINRIM("men"),
-    EHWATHRIM("men"),
+    AIVATHIUDA("men"),
+    ANTHAR("men"),
+    GADRAUGHT("men"),
     BARDING("men"),
     GRAMMAS("men"),
     RIVERMEN("men"),
@@ -36,7 +38,6 @@ public enum CultureToReligion {
     BEORNING("men"),
     ANDUINMEN("men"),
     DRUEDAIN("men"),
-    WILDMEN("men"),
     DUNNISH("men"),
     DUNIR("men"),
     ENEDWAITHRIM("men"),
@@ -91,7 +92,11 @@ public enum CultureToReligion {
     GRAM_GOBLIN("orc"),
     STOOR("hobbit"),
     HARFOOT("hobbit"),
-    FALLOHIDE("hobbit");
+    FALLOHIDE("hobbit"),
+    BLACK_HUORN("ent"),
+    BEIABARNAE("men"),
+    MELBURGI("men"),
+    HERIMUNDI("men");
 
     private final String race;
     private static final Map<String, String> cultureToRaceCache = new HashMap<>();
