@@ -61,10 +61,7 @@ public class ImageTesting {
 
                 Color color = new Color(img.getRGB(x, y));
 
-                /*
-                 * By default, a pixel is black. We only want to change the color to white if all adjacent (including corners) on the original image are the same color.
-                 * If even a single pixel is different, we need to keep the pixel on the new image as black to signify a border
-                 */
+                /* By default, a pixel is transparent/white. We only want to change the color to black if one adjacent (including corners) on the original image is a same color. */
                 if (canCheckLeft && canCheckUp && !shouldUpdateColor(x, y, true, false, true, false, color, img)) {
                     updateColor(x, y, output);
                     continue;
