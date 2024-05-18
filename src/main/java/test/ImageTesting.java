@@ -4,7 +4,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 public class ImageTesting {
 
@@ -42,14 +41,17 @@ public class ImageTesting {
         return color.equals(otherColor);
     }
 
+    public static void updateColor(int x, int y, BufferedImage output) {
+        output.setRGB(x, y, Color.BLACK.getRGB());
+    }
+
     public static void main(String[] args) throws Exception {
 
         BufferedImage img = ImageIO.read(new File("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA\\test_provinces.bmp"));
-        BufferedImage output = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+        BufferedImage output = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         for (int x = 0; x < img.getWidth(); x++) {
             for (int y = 0; y < img.getHeight(); y++) {
-
 
 
                 boolean canCheckLeft = x != 0;
@@ -64,41 +66,49 @@ public class ImageTesting {
                  * If even a single pixel is different, we need to keep the pixel on the new image as black to signify a border
                  */
                 if (canCheckLeft && canCheckUp && !shouldUpdateColor(x, y, true, false, true, false, color, img)) {
+                    updateColor(x, y, output);
                     continue;
                 }
 
                 if (canCheckUp && !shouldUpdateColor(x, y, false, false, true, false, color, img)) {
+                    updateColor(x, y, output);
                     continue;
                 }
 
                 if (canCheckRight && canCheckUp && !shouldUpdateColor(x, y, false, true, true, false, color, img)) {
+                    updateColor(x, y, output);
                     continue;
                 }
 
                 if (canCheckLeft && !shouldUpdateColor(x, y, true, false, false, false, color, img)) {
+                    updateColor(x, y, output);
                     continue;
                 }
 
                 if (canCheckRight && !shouldUpdateColor(x, y, false, true, false, false, color, img)) {
+                    updateColor(x, y, output);
                     continue;
                 }
 
                 if (canCheckLeft && canCheckDown && !shouldUpdateColor(x, y, true, false, false, true, color, img)) {
+                    updateColor(x, y, output);
                     continue;
                 }
 
                 if (canCheckDown && !shouldUpdateColor(x, y, false, false, false, true, color, img)) {
+                    updateColor(x, y, output);
                     continue;
                 }
 
                 if (canCheckRight && canCheckDown && !shouldUpdateColor(x, y, false, true, false, true, color, img)) {
+                    updateColor(x, y, output);
                     continue;
                 }
-
-                output.setRGB(x, y, Color.WHITE.getRGB());
             }
         }
 
+        // Make a transparent one (png) and one with a white background (bmp)
+        ImageIO.write(output, "PNG", new File("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA\\test_output.png"));
         ImageIO.write(output, "BMP", new File("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA\\test_output.bmp"));
     }
 }
