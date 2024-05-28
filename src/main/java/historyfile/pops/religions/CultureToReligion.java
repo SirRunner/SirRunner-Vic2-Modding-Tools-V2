@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum CultureToReligion {
+    BANKER("men"),
     DUNEDAIN("men"),
     GONDORIAN("men"),
     AMROTHIAN("men"),
