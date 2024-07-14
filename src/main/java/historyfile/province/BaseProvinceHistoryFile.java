@@ -27,8 +27,7 @@ public abstract class BaseProvinceHistoryFile {
     protected int railroadLevel;
     protected int fortLevel;
     protected int navalBaseLevel;
-    // TODO: Make factory object
-    protected List<String> factories;
+    protected List<Factory> factories;
     protected boolean slave;
     protected int colonial;
     protected String comment;
@@ -156,11 +155,11 @@ public abstract class BaseProvinceHistoryFile {
         this.climate = climate;
     }
 
-    public List<String> getFactories() {
+    public List<Factory> getFactories() {
         return factories;
     }
 
-    public void setFactories(List<String> factories) {
+    public void setFactories(List<Factory> factories) {
         this.factories = factories;
     }
 
@@ -168,12 +167,24 @@ public abstract class BaseProvinceHistoryFile {
         String[] factoryArray = StringUtils.split(factories, " ");
         this.factories = new ArrayList<>();
 
+        int count = 1;
+
         for (String factory : factoryArray) {
-            addFactory(factory);
+            if (StringUtils.isNumeric(factory)) {
+                count = Integer.parseInt(factory);
+                continue;
+            }
+
+            addFactory(factory, count);
+            count = 1;
         }
     }
 
-    public void addFactory(String factory) {
+    public void addFactory(String name, int count) {
+        addFactory(new Factory(name, count));
+    }
+
+    public void addFactory(Factory factory) {
         if (this.factories == null) {
             this.factories = new ArrayList<>();
         }
@@ -315,10 +326,10 @@ public abstract class BaseProvinceHistoryFile {
             builder.append("colonial = ").append(getColonial()).append("\n");
         }
 
-        for (String factory : getFactories()) {
+        for (Factory factory : getFactories()) {
             builder.append("state_building = {\n");
-            builder.append("\tlevel = 1\n");
-            builder.append("\tbuilding = ").append(factory).append("\n");
+            builder.append("\tlevel = ").append(factory.getLevel()).append("\n");
+            builder.append("\tbuilding = ").append(factory.getType()).append("\n");
             builder.append("\tupgrade = yes\n");
             builder.append("}\n");
         }
