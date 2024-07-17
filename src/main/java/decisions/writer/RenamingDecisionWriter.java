@@ -5,7 +5,7 @@ import decisions.nodes.PoliticalDecisions;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.Map;
 
 public class RenamingDecisionWriter {
@@ -18,7 +18,7 @@ public class RenamingDecisionWriter {
     }
 
     public void writeFile() {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.ISO_8859_1))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), Charset.forName("windows-1252")))) {
             writer.write("# Remove this line to have the validator check that ORs have more than one condition and that interior arguments are correct\n");
             writer.write("# Audax Validator \"!\" Ignore_1002\n");
             writer.write("# Audax Validator \"!\" Ignore_1009\n");

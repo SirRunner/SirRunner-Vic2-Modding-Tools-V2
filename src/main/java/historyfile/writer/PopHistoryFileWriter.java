@@ -5,7 +5,7 @@ import historyfile.pops.PopHistoryFile;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,10 +26,10 @@ public class PopHistoryFileWriter {
     }
 
     public void write() {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getFilePath()), StandardCharsets.UTF_8))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getFilePath()), Charset.forName("windows-1252")))) {
             writer.write("""
                     # "religions": men, elven, dwarven, orc, hobbit, ent, troll, eagle, spider, undead
-                    
+                                        
                     ### - Population Research
                     # - Based on medieval populations, especially from the late ERE
                     # - Reference materiel: https://medium.com/migration-issues/notes-on-medieval-population-geography-fd062449364f
@@ -43,7 +43,7 @@ public class PopHistoryFileWriter {
 
             List<Integer> ids = idToPopHistory.keySet().stream().sorted().collect(Collectors.toList());
 
-            for (Integer id: ids) {
+            for (Integer id : ids) {
                 writer.write(idToPopHistory.get(id).toString());
             }
         } catch (Exception e) {

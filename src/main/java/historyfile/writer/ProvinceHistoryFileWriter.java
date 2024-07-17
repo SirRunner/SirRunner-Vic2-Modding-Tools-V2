@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 
 public class ProvinceHistoryFileWriter {
     protected String provinceHistoryFolder;
@@ -18,7 +18,7 @@ public class ProvinceHistoryFileWriter {
     }
 
     public void writeFile() {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getFilename(provinceHistory)), StandardCharsets.UTF_8))) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getFilename(provinceHistory)), Charset.forName("windows-1252")))) {
             writer.write(provinceHistory.toString());
         } catch (Exception e) {
             e.printStackTrace();

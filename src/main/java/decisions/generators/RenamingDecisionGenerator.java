@@ -24,7 +24,7 @@ import utils.paradox.scripting.effects.EffectScope;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -476,7 +476,7 @@ public class RenamingDecisionGenerator {
         writer.writeFile();
 
         /* Write the starting effects output */
-        try (BufferedWriter startingEffectsWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(forStartingDecisionEffectsOutfile), StandardCharsets.UTF_8))) {
+        try (BufferedWriter startingEffectsWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(forStartingDecisionEffectsOutfile), Charset.forName("windows-1252")))) {
             for (EffectScope startingEffect : variableStartingValues) {
                 startingEffectsWriter.write(startingEffect.toString());
             }
@@ -485,7 +485,7 @@ public class RenamingDecisionGenerator {
         }
 
         /* Write the decision localisation file */
-        try (BufferedWriter localisationWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(decisionLocalizationOutfile), StandardCharsets.UTF_8))) {
+        try (BufferedWriter localisationWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(decisionLocalizationOutfile), Charset.forName("windows-1252")))) {
             for (String decisionName : decisionRegionToLocalization.keySet()) {
                 for (String localization : decisionRegionToLocalization.get(decisionName)) {
                     localisationWriter.write(localization);
