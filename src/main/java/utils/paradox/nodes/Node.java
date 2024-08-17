@@ -7,6 +7,9 @@ import java.util.List;
 
 public class Node {
     List<Node> nodes;
+    /* This realistically should be a List of Strings (and be called values) to account for things like color = { 1 1 1 } */
+    // TODO: Update to be a List<String>
+    // Test this with common/ideologies.txt
     String value;
     String comment;
     String name;

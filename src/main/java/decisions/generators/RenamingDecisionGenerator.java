@@ -397,14 +397,14 @@ public class RenamingDecisionGenerator {
             count++;
         }
 
-        outerAndCondition.addCondition(middleOrCondition);
-
         /* Adds the owns conditions for the region */
         for (int provinceId : region.getProvinces()) {
             Condition ownsProvince = ScriptingUtils.getCondition("owns", Integer.toString(provinceId));
 
             outerAndCondition.addCondition(ownsProvince);
         }
+
+        outerAndCondition.addCondition(middleOrCondition);
 
         /* If we have no changes, don't make the decision */
         if (randomOwnedScopes.isEmpty()) {

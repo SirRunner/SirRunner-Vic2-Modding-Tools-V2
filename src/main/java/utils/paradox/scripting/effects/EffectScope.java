@@ -59,6 +59,15 @@ public class EffectScope extends BasicEffect {
         }
     }
 
+    public void addEffects(List<BasicEffect> effects) {
+
+        if (effects == null || effects.isEmpty()) {
+            return;
+        }
+
+        effects.forEach(this::addEffect);
+    }
+
     public ConditionScope getLimit() {
         return limit;
     }

@@ -28,6 +28,10 @@ public class Localisation {
         return localisationForLanguage.getOrDefault(language, "");
     }
 
+    public String getLocalisation() {
+        return getLocalisation(Language.ENGLISH);
+    }
+
     public void setLocalisationForLanguage(Map<Language, String> localisationForLanguage) {
         this.localisationForLanguage = localisationForLanguage;
     }

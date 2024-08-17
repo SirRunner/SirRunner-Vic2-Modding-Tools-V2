@@ -12,6 +12,7 @@ import java.util.Set;
 
 public abstract class BasicCondition extends ScriptItem {
     protected enum VALIDCOUNTRYCONDITIONS {
+        AI,
         ALWAYS,
         HAS_COUNTRY_MODIFIER,
         IS_VASSAL,

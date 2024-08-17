@@ -192,7 +192,9 @@ public class Event {
 
         string.append("country_event = {\n");
         string.append("\tid = ").append(getId()).append("\n");
-        string.append("\tpicture = \"").append(getPicture()).append("\"\n");
+        if (StringUtils.isNotEmpty(getPicture())) {
+            string.append("\tpicture = \"").append(getPicture()).append("\"\n");
+        }
         string.append("\ttitle = \"").append(getTitle()).append("\"\n");
         string.append("\tdesc = \"").append(getDescription()).append("\"\n");
 
