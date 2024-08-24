@@ -7,6 +7,7 @@ import decisions.reader.RegionRenamingCSVReader;
 import decisions.renaming.ProvinceRenaming;
 import decisions.renaming.RegionRenaming;
 import events.nodes.Event;
+import events.nodes.Immediate;
 import events.nodes.Option;
 import events.writer.EventWriter;
 import map.reader.RegionReader;
@@ -23,8 +24,7 @@ import java.util.*;
 
 public class DynamicLocRegionSetter extends RenamingDecisionGenerator {
 
-    public static final int NUMBER_REGION_SELECTION_EVENTS = 8;
-    public static final int STARTING_EVENT_ID = 300008;
+    protected final int NUMBER_OF_REGION_SLOTS = 8;
 
     protected enum WASTELAND_REGIONS {
         GON_796, // White Mountains
@@ -32,7 +32,7 @@ public class DynamicLocRegionSetter extends RenamingDecisionGenerator {
         DOR_551, // Eastern Hills
         ERE_151, // Ered Mithrin
         ERE_1166, // Emyn Engrin
-        ANG_1374; // Ephel Angmar
+        ANG_1374 // Ephel Angmar
     }
 
     protected void run() throws Exception {
@@ -53,18 +53,18 @@ public class DynamicLocRegionSetter extends RenamingDecisionGenerator {
         Map<Region, Set<Set<String>>> wtfIsThisTest = new HashMap<>();
 
         /* In regions.txt, but not in the spreadsheet */
-        for (String code: Sets.difference(codeToRegion.keySet(), codeToRegionRenaming.keySet())) {
+        for (String code : Sets.difference(codeToRegion.keySet(), codeToRegionRenaming.keySet())) {
 
             if (StringUtils.endsWith(code, "_loc")) {
                 continue;
             }
 
-            System.out.println( code );
+            System.out.println(code);
         }
 
         /* In the spreadsheet, but not in regions.txt */
-        for (String code: Sets.difference(codeToRegionRenaming.keySet(), codeToRegion.keySet())) {
-            System.out.println( code );
+        for (String code : Sets.difference(codeToRegionRenaming.keySet(), codeToRegion.keySet())) {
+            System.out.println(code);
         }
 
         for (String regionCode : codeToRegionRenaming.keySet()) {
@@ -79,51 +79,236 @@ public class DynamicLocRegionSetter extends RenamingDecisionGenerator {
             wtfIsThisTest.put(codeToRegion.get(regionCode), cultureGroupings);
         }
 
-        EventWriter writer = new EventWriter(outputFilename, generateDynamicLocEvents(wtfIsThisTest, codeToRegionRenaming), "Dynamic Loc Region Selection", STARTING_EVENT_ID, STARTING_EVENT_ID + NUMBER_REGION_SELECTION_EVENTS - 1);
+        EventWriter writer = new EventWriter(outputFilename, generateDynamicLocEvents(wtfIsThisTest, codeToRegionRenaming), "Dynamic Loc Region Selection", 300008, 300009);
         writer.writeFile();
     }
 
     protected List<Event> generateDynamicLocEvents(Map<Region, Set<Set<String>>> regionRenamings, Map<String, RegionRenaming> codeToRegionRenaming) {
         List<Event> events = new ArrayList<>();
 
-        for (int i = 0; i < NUMBER_REGION_SELECTION_EVENTS; i++) {
-            Event event = new Event();
-
-            event.setId(STARTING_EVENT_ID + i);
-            event.setTitle("Dynamic Loc Region Selection " + (i + 1));
-            event.setDescription("");
-            event.setTriggeredOnly(true);
-
-            event.addOption(getEventOption(i + 1, regionRenamings, codeToRegionRenaming));
-
-            events.add(event);
-        }
+        events.add(getHandlerEvent());
+        events.add(getRenamingEvent(regionRenamings, codeToRegionRenaming));
 
         return events;
     }
 
-    protected Option getEventOption(int i, Map<Region, Set<Set<String>>> regionRenamings, Map<String, RegionRenaming> codeToRegionRenaming) {
+    protected Event getHandlerEvent() {
+        Event event = new Event();
 
-        Option option = new Option();
+        event.setId(300008);
+        event.setTitle("Dynamic Loc Region Selection Handler");
+        event.setDescription("");
+        event.setTriggeredOnly(true);
 
-        option.setName("Assign loc");
+        event.setImmediate(getHandlerImmediate());
+        event.addOption(getBasicOption());
 
-        EffectScope randomOwned = ScriptingUtils.getEffectScope("random_owned");
-
-
-        for (Region region : regionRenamings.keySet()) {
-            randomOwned.addEffects(getEffects(i, region, regionRenamings.get(region), codeToRegionRenaming.get(region.getCode())));
-        }
-
-        option.addEffect(randomOwned);
-
-        return option;
-
+        return event;
     }
 
-    protected List<BasicEffect> getEffects(int i, Region region, Set<Set<String>> nameGroups, RegionRenaming regionRenaming) {
+    protected Immediate getHandlerImmediate() {
+        Immediate immediate = new Immediate();
 
-        List<BasicEffect> anyNeighborProvinces = new ArrayList<>();
+        immediate.addEffect(getHandlerChangeVariableEffect());
+
+        for (int i = 1; i <= NUMBER_OF_REGION_SLOTS; i++) {
+            immediate.addEffect(getHandlerEventTriggeringEffect(i));
+        }
+
+        return immediate;
+    }
+
+    protected BasicEffect getHandlerChangeVariableEffect() {
+        EffectScope effectScope = ScriptingUtils.getEffectScope("change_variable");
+
+        effectScope.addEffect(ScriptingUtils.getEffect("which", "dynamic_loc_names"));
+        effectScope.addEffect(ScriptingUtils.getEffect("value", "1"));
+
+        return effectScope;
+    }
+
+    protected BasicEffect getHandlerEventTriggeringEffect(int i) {
+        EffectScope randomOwned = ScriptingUtils.getEffectScope("random_owned");
+
+        ConditionScope limit = ScriptingUtils.getConditionScope("limit");
+        ConditionScope owner = ScriptingUtils.getConditionScope("owner");
+
+        ConditionScope lowerScope = ScriptingUtils.getConditionScope("check_variable");
+        lowerScope.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        lowerScope.addCondition(ScriptingUtils.getCondition("value", Double.toString(i - 0.1)));
+        owner.addCondition(lowerScope);
+
+        ConditionScope not = ScriptingUtils.getNOTCondition();
+        ConditionScope upperScope = ScriptingUtils.getConditionScope("check_variable");
+        upperScope.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        upperScope.addCondition(ScriptingUtils.getCondition("value", Double.toString(i + 0.1)));
+        not.addCondition(upperScope);
+        owner.addCondition(not);
+
+        ConditionScope regionCountMinimum = ScriptingUtils.getConditionScope("check_variable");
+        regionCountMinimum.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_region_count"));
+        regionCountMinimum.addCondition(ScriptingUtils.getCondition("value", Double.toString(i - 0.1)));
+        owner.addCondition(regionCountMinimum);
+
+        /* We can only display 8 regions at a time. When there are more than 8 regions, we display "next" -- meaning that if there are 9 potential options, we only want to display the first 7 */
+        if (i == 8) {
+            ConditionScope regionCountNot = ScriptingUtils.getNOTCondition();
+            ConditionScope regionCountMaximum = ScriptingUtils.getConditionScope("check_variable");
+            regionCountMaximum.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_region_count"));
+            regionCountMaximum.addCondition(ScriptingUtils.getCondition("value", Double.toString(i + 0.1)));
+            regionCountNot.addCondition(regionCountMaximum);
+            owner.addCondition(regionCountNot);
+        }
+
+        limit.addCondition(owner);
+
+        randomOwned.setLimit(limit);
+
+        EffectScope ownerEffect = ScriptingUtils.getEffectScope("owner");
+
+        EffectScope countryEvent = ScriptingUtils.getEffectScope("country_event");
+        countryEvent.addEffect(ScriptingUtils.getEffect("id", "300009"));
+        countryEvent.addEffect(ScriptingUtils.getEffect("days", "0"));
+        ownerEffect.addEffect(countryEvent);
+
+        randomOwned.addEffect(ownerEffect);
+
+        return randomOwned;
+    }
+
+    protected Option getBasicOption() {
+        Option option = new Option();
+
+        option.setName("");
+
+        return option;
+    }
+
+    protected Event getRenamingEvent(Map<Region, Set<Set<String>>> regionRenamings, Map<String, RegionRenaming> codeToRegionRenaming) {
+        Event event = new Event();
+
+        event.setId(300009);
+        event.setTitle("Dynamic Loc Region Selection Renaming");
+        event.setDescription("");
+        event.setTriggeredOnly(true);
+
+        event.setImmediate(getRenamingImmediate(regionRenamings, codeToRegionRenaming));
+        event.addOption(getBasicOption());
+
+        return event;
+    }
+
+    protected Immediate getRenamingImmediate(Map<Region, Set<Set<String>>> regionRenamings, Map<String, RegionRenaming> codeToRegionRenaming) {
+        Immediate immediate = new Immediate();
+
+        for (int i = 1; i <= NUMBER_OF_REGION_SLOTS; i++) {
+            immediate.addEffect(getRenamingImmediateSetup(i));
+        }
+
+        for (Region region : regionRenamings.keySet()) {
+            immediate.addEffects(getRenamings(region, regionRenamings.get(region), codeToRegionRenaming.get(region.getCode())));
+        }
+
+        EffectScope randomOwned = ScriptingUtils.getEffectScope("random_owned");
+        EffectScope anyNeighborProvince = ScriptingUtils.getEffectScope("any_neighbor_province");
+        anyNeighborProvince.addEffect(ScriptingUtils.getEffect("remove_province_modifier", "dynamic_loc_slot_selector"));
+        randomOwned.addEffect(anyNeighborProvince);
+        randomOwned.setComment("Cleans up land provinces");
+
+        immediate.addEffect(randomOwned);
+
+        EffectScope dynamicLocSlots = ScriptingUtils.getEffectScope("dynamic_loc_slots");
+        dynamicLocSlots.addEffect(ScriptingUtils.getEffect("remove_province_modifier", "dynamic_loc_slot_selector"));
+        dynamicLocSlots.setComment("Cleans up sea provinces");
+
+        immediate.addEffect(dynamicLocSlots);
+
+        EffectScope countryEvent = ScriptingUtils.getEffectScope("country_event");
+        countryEvent.addEffect(ScriptingUtils.getEffect("id", "300008"));
+        countryEvent.addEffect(ScriptingUtils.getEffect("days", "0"));
+        countryEvent.setComment("Go back to the handler");
+
+        immediate.addEffect(countryEvent);
+
+        return immediate;
+    }
+
+    protected BasicEffect getRenamingImmediateSetup(int i) {
+        EffectScope randomOwned = ScriptingUtils.getEffectScope("random_owned");
+
+        randomOwned.setLimit(getRenamingImmediateRandomOwnedLimit(i));
+
+        EffectScope regionSlot = ScriptingUtils.getEffectScope("dynamic_loc_region_slot_" + i);
+        EffectScope provinceModifier = ScriptingUtils.getEffectScope("add_province_modifier");
+        provinceModifier.addEffect(ScriptingUtils.getEffect("name", "dynamic_loc_slot_selector"));
+        provinceModifier.addEffect(ScriptingUtils.getEffect("duration", "1"));
+        regionSlot.addEffect(provinceModifier);
+
+        randomOwned.addEffect(regionSlot);
+        randomOwned.addEffect(getRenamingImmediateRandomOwnedRandomNeighborProvince(i));
+
+        return randomOwned;
+    }
+
+    protected ConditionScope getRenamingImmediateRandomOwnedLimit(int i) {
+        ConditionScope limit = ScriptingUtils.getConditionScope("limit");
+        ConditionScope owner = ScriptingUtils.getConditionScope("owner");
+
+        ConditionScope checkVariableLower = ScriptingUtils.getConditionScope("check_variable");
+        checkVariableLower.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        checkVariableLower.addCondition(ScriptingUtils.getCondition("value", Double.toString(i - 0.1)));
+
+        ConditionScope not = ScriptingUtils.getNOTCondition();
+        ConditionScope checkVariableUpper = ScriptingUtils.getConditionScope("check_variable");
+        checkVariableUpper.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        checkVariableUpper.addCondition(ScriptingUtils.getCondition("value", Double.toString(i + 0.1)));
+        not.addCondition(checkVariableUpper);
+
+        owner.addCondition(checkVariableLower);
+        owner.addCondition(not);
+        limit.addCondition(owner);
+
+        return limit;
+    }
+
+    protected EffectScope getRenamingImmediateRandomOwnedRandomNeighborProvince(int i) {
+        EffectScope randomNeighborProvince = ScriptingUtils.getEffectScope("random_neighbor_province");
+
+        ConditionScope limit1 = ScriptingUtils.getConditionScope("limit");
+        limit1.addCondition(ScriptingUtils.getCondition("has_province_modifier", "dynamic_loc_potential_region_target"));
+
+        randomNeighborProvince.setLimit(limit1);
+
+        EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
+        EffectScope anyOwned = ScriptingUtils.getEffectScope("any_owned");
+
+        ConditionScope limit2 = ScriptingUtils.getConditionScope("limit");
+        limit2.addCondition(ScriptingUtils.getCondition("has_province_modifier", "dynamic_loc_potential_region_target"));
+
+        anyOwned.setLimit(limit2);
+
+        EffectScope addProvinceModifier = ScriptingUtils.getEffectScope("add_province_modifier");
+        addProvinceModifier.addEffect(ScriptingUtils.getEffect("name", "dynamic_loc_region_target_" + i));
+        addProvinceModifier.addEffect(ScriptingUtils.getEffect("duration", "-1"));
+
+        anyOwned.addEffect(addProvinceModifier);
+
+        EffectScope addProvinceModifierSelector = ScriptingUtils.getEffectScope("add_province_modifier");
+        addProvinceModifierSelector.addEffect(ScriptingUtils.getEffect("name", "dynamic_loc_slot_selector"));
+        addProvinceModifierSelector.addEffect(ScriptingUtils.getEffect("duration", "-1"));
+
+        anyOwned.addEffect(addProvinceModifierSelector);
+        anyOwned.addEffect(ScriptingUtils.getEffect("remove_province_modifier", "dynamic_loc_potential_region_target"));
+
+        stateScope.addEffect(anyOwned);
+        randomNeighborProvince.addEffect(stateScope);
+
+        return randomNeighborProvince;
+    }
+
+    protected List<BasicEffect> getRenamings(Region region, Set<Set<String>> nameGroups, RegionRenaming regionRenaming) {
+
+        List<BasicEffect> renamings = new ArrayList<>();
         int count = 0;
 
         if (nameGroups.isEmpty()) {
@@ -132,37 +317,35 @@ public class DynamicLocRegionSetter extends RenamingDecisionGenerator {
 
         for (Set<String> nameGroup : nameGroups) {
 
-            EffectScope anyNeighborProvince = ScriptingUtils.getEffectScope("any_neighbor_province");
+            EffectScope dynamicLocSlots = ScriptingUtils.getEffectScope("dynamic_loc_slots");
 
-            anyNeighborProvince.setLimit(getDynamicLocLimit(i, count, region, nameGroup, regionRenaming));
-            anyNeighborProvince.addEffect(getStateNameChange(i, region, nameGroup, regionRenaming));
-            anyNeighborProvince.addEffect(getModifierUpdates(i, region, nameGroup, regionRenaming));
-            anyNeighborProvince.addEffect(addPreventativeFlag(i));
+            dynamicLocSlots.setLimit(getDynamicLocLimit(count, region, regionRenaming));
 
-            anyNeighborProvinces.add(anyNeighborProvince);
+            EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
+            stateScope.addEffect(ScriptingUtils.getEffect("change_region_name", "\"" + getNameForCulture(nameGroup, regionRenaming) + "\""));
+
+            dynamicLocSlots.addEffect(stateScope);
+
+            renamings.add(dynamicLocSlots);
 
             count++;
 
         }
 
+        return renamings;
 
-        return anyNeighborProvinces;
     }
 
-    protected ConditionScope getDynamicLocLimit(int i, int count, Region region, Set<String> nameGroup, RegionRenaming regionRenaming) {
+    protected ConditionScope getDynamicLocLimit(int count, Region region, RegionRenaming regionRenaming) {
 
         ConditionScope limit = ScriptingUtils.getConditionScope("limit");
 
-        limit.addCondition(ScriptingUtils.getCondition("has_province_modifier", "dynamic_loc_potential_region_target"));
-        limit.addCondition(ScriptingUtils.getCondition("region", region.getCode()));
+        limit.addCondition(ScriptingUtils.getCondition("has_province_modifier", "dynamic_loc_slot_selector"));
 
-        ConditionScope not = ScriptingUtils.getNOTCondition();
-        ConditionScope owner = ScriptingUtils.getConditionScope("owner");
+        ConditionScope regionCode = ScriptingUtils.getConditionScope(region.getCode());
+        regionCode.addCondition(ScriptingUtils.getCondition("has_province_modifier", "dynamic_loc_slot_selector"));
 
-        owner.addCondition(ScriptingUtils.getCondition("has_global_flag", "dynamic_loc_option_" + i + "_found"));
-        not.addCondition(owner);
-
-        limit.addCondition(not);
+        limit.addCondition(regionCode);
 
         String variableName = regionRenaming.getVariableName();
 
@@ -193,53 +376,11 @@ public class DynamicLocRegionSetter extends RenamingDecisionGenerator {
         return limit;
     }
 
-    protected EffectScope getStateNameChange(int i, Region region, Set<String> nameGroup, RegionRenaming regionRenaming) {
-
-        EffectScope dynamicLocRegion = ScriptingUtils.getEffectScope("dynamic_loc_region_slot_" + i);
-        EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
-
-        stateScope.addEffect(ScriptingUtils.getEffect("change_region_name", "\"" + getNameForCulture(nameGroup, regionRenaming) + "\""));
-
-        dynamicLocRegion.addEffect(stateScope);
-
-        return dynamicLocRegion;
-    }
-
     protected String getNameForCulture(Set<String> nameGroup, RegionRenaming regionRenaming) {
 
         String regionName = regionRenaming.getNameForCultureGroup(nameGroup.iterator().next());
 
         return StringUtils.isNotEmpty(regionName) ? regionName : regionRenaming.getStartingName();
-    }
-
-    protected EffectScope getModifierUpdates(int i, Region region, Set<String> nameGroup, RegionRenaming regionRenaming) {
-        EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
-        EffectScope anyOwned = ScriptingUtils.getEffectScope("any_owned");
-
-        ConditionScope limit = ScriptingUtils.getConditionScope("limit");
-
-        limit.addCondition(ScriptingUtils.getCondition("has_province_modifier", "dynamic_loc_potential_region_target"));
-
-        anyOwned.setLimit(limit);
-
-        EffectScope addProvinceModifier = ScriptingUtils.getEffectScope("add_province_modifier");
-        addProvinceModifier.addEffect(ScriptingUtils.getEffect("name", "dynamic_loc_region_target_" + i));
-        addProvinceModifier.addEffect(ScriptingUtils.getEffect("duration", "-1"));
-
-        anyOwned.addEffect(addProvinceModifier);
-        anyOwned.addEffect(ScriptingUtils.getEffect("remove_province_modifier", "dynamic_loc_potential_region_target"));
-
-        stateScope.addEffect(anyOwned);
-
-        return stateScope;
-    }
-
-    protected EffectScope addPreventativeFlag(int i) {
-
-        EffectScope owner = ScriptingUtils.getEffectScope("owner");
-        owner.addEffect(ScriptingUtils.getEffect("set_global_flag", "dynamic_loc_option_" + i + "_found"));
-
-        return owner;
     }
 
     public static void main(String[] args) {

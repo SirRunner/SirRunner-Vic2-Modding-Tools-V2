@@ -131,7 +131,7 @@ public abstract class ScriptItem {
         }
 
         if (hasComment() && getCommentLocation() == COMMENTLOCATION.BEFORE) {
-            string.append(tabs).append("# ").append(getComment()).append(lineEnd);
+            string.append(tabs).append("# ").append(getComment()).append("\n");
         }
 
         /* We only want to apply tabs to inner items if this is not a one liner */

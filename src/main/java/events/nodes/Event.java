@@ -17,6 +17,7 @@ public class Event {
     protected boolean fireOnlyOnce;
     protected Trigger trigger;
     protected MTTH meanTimeToHappen;
+    protected Immediate immediate;
     protected List<Option> options;
 
     public Event() {
@@ -51,6 +52,7 @@ public class Event {
             case IS_TRIGGERED_ONLY -> setTriggeredOnly(node);
             case TRIGGER -> setTrigger(node);
             case MEAN_TIME_TO_HAPPEN -> setMeanTimeToHappen(node);
+            case IMMEDIATE -> setImmediate(node);
             case OPTION -> addOption(node);
         }
     }
@@ -151,6 +153,18 @@ public class Event {
         this.meanTimeToHappen = meanTimeToHappen;
     }
 
+    public Immediate getImmediate() {
+        return immediate;
+    }
+
+    public void setImmediate(Node node) {
+        setImmediate(new Immediate(node));
+    }
+
+    public void setImmediate(Immediate immediate) {
+        this.immediate = immediate;
+    }
+
     public List<Option> getOptions() {
         return options;
     }
@@ -180,6 +194,7 @@ public class Event {
         IS_TRIGGERED_ONLY,
         TRIGGER,
         MEAN_TIME_TO_HAPPEN,
+        IMMEDIATE,
         OPTION;
 
         public static KEYWORDS getKeywordByName(String word) {
@@ -212,6 +227,10 @@ public class Event {
 
         if (!getMeanTimeToHappen().isEmpty()) {
             string.append(getMeanTimeToHappen().toString());
+        }
+
+        if (getImmediate() != null) {
+            string.append(getImmediate().toString());
         }
 
         for (Option option : options) {

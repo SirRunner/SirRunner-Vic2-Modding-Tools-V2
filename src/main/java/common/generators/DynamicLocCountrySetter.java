@@ -9,6 +9,7 @@ import common.readers.CountryListReader;
 import common.readers.GovernmentReader;
 import common.readers.IdeologyReader;
 import events.nodes.Event;
+import events.nodes.Immediate;
 import events.nodes.Option;
 import events.writer.EventWriter;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,7 @@ import utils.Logger;
 import utils.paradox.parsing.localisation.ParadoxLocalisationParser;
 import utils.paradox.scripting.ScriptingUtils;
 import utils.paradox.scripting.conditions.ConditionScope;
+import utils.paradox.scripting.effects.BasicEffect;
 import utils.paradox.scripting.effects.EffectScope;
 import utils.paradox.scripting.localisation.Localisation;
 
@@ -30,8 +32,7 @@ public class DynamicLocCountrySetter {
     protected String governmentsFilename;
     protected String outputFilename;
 
-    public static final int NUMBER_COUNTRY_SELECTION_EVENTS = 8;
-    public static final int STARTING_EVENT_ID = 300000;
+    protected final int NUMBER_OF_COUNTRY_SLOTS = 8;
 
     public void setCountriesFilename(String countriesFilename) {
         this.countriesFilename = countriesFilename;
@@ -104,82 +105,258 @@ public class DynamicLocCountrySetter {
             }
         }
 
-        EventWriter writer = new EventWriter(outputFilename, generateDynamicLocEvents(countryRenamings), "Dynamic Loc Country Selection", STARTING_EVENT_ID, STARTING_EVENT_ID + NUMBER_COUNTRY_SELECTION_EVENTS - 1);
+        EventWriter writer = new EventWriter(outputFilename, generateDynamicLocEvents(countryRenamings), "Dynamic Loc Country Selection", 300000, 300001);
         writer.writeFile();
     }
 
     protected List<Event> generateDynamicLocEvents(List<CountryRenaming> countryRenamings) {
         List<Event> events = new ArrayList<>();
 
-        for (int i = 0; i < NUMBER_COUNTRY_SELECTION_EVENTS; i++) {
-            Event event = new Event();
-
-            event.setId(STARTING_EVENT_ID + i);
-            event.setTitle("Dynamic Loc Country Selection " + (i + 1));
-            event.setDescription("");
-            event.setTriggeredOnly(true);
-
-            event.addOption(getEventOption(i, countryRenamings));
-
-            events.add(event);
-        }
+        events.add(getHandlerEvent());
+        events.add(getRenamingEvent(countryRenamings));
 
         return events;
     }
 
-    protected Option getEventOption(int i, List<CountryRenaming> countryRenamings) {
-        Option option = new Option();
+    protected Event getHandlerEvent() {
+        Event event = new Event();
 
-        option.setName("Assign Loc");
-        option.addEffect(ScriptingUtils.getEffect("clr_global_flag", "dynamic_loc_option_" + (i + 1) + "_found"));
+        event.setId(300000);
+        event.setTitle("Dynamic Loc Country Selection Handler");
+        event.setDescription("");
+        event.setTriggeredOnly(true);
 
-        for (CountryRenaming countryRenaming : countryRenamings) {
+        event.setImmediate(getHandlerImmediate());
+        event.addOption(getBasicOption());
 
-            int numberOfGroups = countryRenaming.getGovernmentGroupings().asMap().entrySet().size();
+        return event;
+    }
 
-            for (Map.Entry<String, Collection<Government>> entry : countryRenaming.getGovernmentGroupings().asMap().entrySet()) {
+    protected Immediate getHandlerImmediate() {
+        Immediate immediate = new Immediate();
 
-                EffectScope randomCountry = ScriptingUtils.getEffectScope("random_country");
+        immediate.addEffect(getHandlerChangeVariableEffect());
 
-                ConditionScope limit = ScriptingUtils.getConditionScope("limit");
-
-                limit.addCondition(ScriptingUtils.getCondition("tag", countryRenaming.getCountry().getTag()));
-                limit.addCondition(ScriptingUtils.getCondition("has_country_flag", "dynamic_loc_potential_country_target"));
-
-                if (numberOfGroups != 1 && entry.getValue().size() != 1) {
-                    ConditionScope or = ScriptingUtils.getORCondition();
-
-                    entry.getValue().forEach(government -> or.addCondition(ScriptingUtils.getCondition("government", government.getName())));
-
-                    limit.addCondition(or);
-                } else if (numberOfGroups != 1) {
-                    entry.getValue().forEach(government -> limit.addCondition(ScriptingUtils.getCondition("government", government.getName())));
-                }
-
-                ConditionScope not = ScriptingUtils.getNOTCondition();
-
-                not.addCondition(ScriptingUtils.getCondition("has_global_flag", "dynamic_loc_option_" + (i + 1) + "_found"));
-                limit.addCondition(not);
-
-                randomCountry.setLimit(limit);
-
-                EffectScope locRegion = ScriptingUtils.getEffectScope("dynamic_loc_country_slot_" + (i + 1));
-                EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
-
-                stateScope.addEffect(ScriptingUtils.getEffect("change_region_name", "\"@" + countryRenaming.getCountry().getTag() + " " + entry.getKey() + "\""));
-                locRegion.addEffect(stateScope);
-
-                randomCountry.addEffect(locRegion);
-                randomCountry.addEffect(ScriptingUtils.getEffect("clr_country_flag", "dynamic_loc_potential_country_target"));
-                randomCountry.addEffect(ScriptingUtils.getEffect("set_country_flag", "dynamic_loc_country_target_" + (i + 1)));
-                randomCountry.addEffect(ScriptingUtils.getEffect("set_global_flag", "dynamic_loc_option_" + (i + 1) + "_found"));
-
-                option.addEffect(randomCountry);
-
-            }
+        for (int i = 1; i <= NUMBER_OF_COUNTRY_SLOTS; i++) {
+            immediate.addEffect(getHandlerEventTriggeringEffect(i));
         }
 
+        return immediate;
+    }
+
+    protected BasicEffect getHandlerChangeVariableEffect() {
+        EffectScope effectScope = ScriptingUtils.getEffectScope("change_variable");
+
+        effectScope.addEffect(ScriptingUtils.getEffect("which", "dynamic_loc_names"));
+        effectScope.addEffect(ScriptingUtils.getEffect("value", "1"));
+
+        return effectScope;
+    }
+
+    protected BasicEffect getHandlerEventTriggeringEffect(int i) {
+        EffectScope randomOwned = ScriptingUtils.getEffectScope("random_owned");
+
+        ConditionScope limit = ScriptingUtils.getConditionScope("limit");
+        ConditionScope owner = ScriptingUtils.getConditionScope("owner");
+
+        ConditionScope lowerScope = ScriptingUtils.getConditionScope("check_variable");
+        lowerScope.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        lowerScope.addCondition(ScriptingUtils.getCondition("value", Double.toString(i - 0.1)));
+        owner.addCondition(lowerScope);
+
+        ConditionScope not = ScriptingUtils.getNOTCondition();
+        ConditionScope upperScope = ScriptingUtils.getConditionScope("check_variable");
+        upperScope.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        upperScope.addCondition(ScriptingUtils.getCondition("value", Double.toString(i + 0.1)));
+        not.addCondition(upperScope);
+        owner.addCondition(not);
+
+        ConditionScope countryCountMinimum = ScriptingUtils.getConditionScope("check_variable");
+        countryCountMinimum.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_country_count"));
+        countryCountMinimum.addCondition(ScriptingUtils.getCondition("value", Double.toString(i - 0.1)));
+        owner.addCondition(countryCountMinimum);
+
+        /* We can only display 8 countries at a time. When there are more than 8 countries, we display "next" -- meaning that if there are 9 potential options, we only want to display the first 7 */
+        if (i == 8) {
+            ConditionScope countryCountNot = ScriptingUtils.getNOTCondition();
+            ConditionScope countryCountMaximum = ScriptingUtils.getConditionScope("check_variable");
+            countryCountMaximum.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_country_count"));
+            countryCountMaximum.addCondition(ScriptingUtils.getCondition("value", Double.toString(i + 0.1)));
+            countryCountNot.addCondition(countryCountMaximum);
+            owner.addCondition(countryCountNot);
+        }
+
+        limit.addCondition(owner);
+
+        randomOwned.setLimit(limit);
+
+        EffectScope ownerEffect = ScriptingUtils.getEffectScope("owner");
+
+        EffectScope countryEvent = ScriptingUtils.getEffectScope("country_event");
+        countryEvent.addEffect(ScriptingUtils.getEffect("id", "300001"));
+        countryEvent.addEffect(ScriptingUtils.getEffect("days", "0"));
+        ownerEffect.addEffect(countryEvent);
+
+        randomOwned.addEffect(ownerEffect);
+
+        return randomOwned;
+    }
+
+    protected Option getBasicOption() {
+        Option option = new Option();
+
+        option.setName("");
+
         return option;
+    }
+
+    protected Event getRenamingEvent(List<CountryRenaming> countryRenamings) {
+        Event event = new Event();
+
+        event.setId(300001);
+        event.setTitle("Dynamic Loc Country Selection Renaming");
+        event.setDescription("");
+        event.setTriggeredOnly(true);
+
+        event.setImmediate(getRenamingImmediate(countryRenamings));
+        event.addOption(getBasicOption());
+
+        return event;
+    }
+
+    protected Immediate getRenamingImmediate(List<CountryRenaming> countryRenamings) {
+        Immediate immediate = new Immediate();
+
+        for (int i = 1; i <= NUMBER_OF_COUNTRY_SLOTS; i++) {
+            immediate.addEffect(getRenamingImmediateSetup(i));
+        }
+
+        for (CountryRenaming countryRenaming : countryRenamings) {
+            immediate.addEffects(getRenamings(countryRenaming));
+        }
+
+        EffectScope anyCountry = ScriptingUtils.getEffectScope("any_country");
+        anyCountry.addEffect(ScriptingUtils.getEffect("clr_country_flag", "dynamic_loc_slot_selector"));
+        anyCountry.setComment("Cleans up countries");
+
+        immediate.addEffect(anyCountry);
+
+        EffectScope dynamicLocSlots = ScriptingUtils.getEffectScope("dynamic_loc_slots");
+        dynamicLocSlots.addEffect(ScriptingUtils.getEffect("remove_province_modifier", "dynamic_loc_slot_selector"));
+        dynamicLocSlots.setComment("Cleans up sea provinces");
+
+        immediate.addEffect(dynamicLocSlots);
+
+        EffectScope countryEvent = ScriptingUtils.getEffectScope("country_event");
+        countryEvent.addEffect(ScriptingUtils.getEffect("id", "300000"));
+        countryEvent.addEffect(ScriptingUtils.getEffect("days", "0"));
+        countryEvent.setComment("Go back to the handler");
+
+        immediate.addEffect(countryEvent);
+
+        return immediate;
+    }
+
+    protected BasicEffect getRenamingImmediateSetup(int i) {
+
+        EffectScope randomOwned = ScriptingUtils.getEffectScope("random_owned");
+
+        randomOwned.setLimit(getRenamingImmediateRandomOwnedLimit(i));
+
+        EffectScope countrySlot = ScriptingUtils.getEffectScope("dynamic_loc_country_slot_" + i);
+        EffectScope provinceModifier = ScriptingUtils.getEffectScope("add_province_modifier");
+        provinceModifier.addEffect(ScriptingUtils.getEffect("name", "dynamic_loc_slot_selector"));
+        provinceModifier.addEffect(ScriptingUtils.getEffect("duration", "1"));
+        countrySlot.addEffect(provinceModifier);
+
+        randomOwned.addEffect(countrySlot);
+        randomOwned.addEffect(getRenamingImmediateRandomOwnedRandomCountry(i));
+
+        return randomOwned;
+    }
+
+    protected ConditionScope getRenamingImmediateRandomOwnedLimit(int i) {
+
+        ConditionScope limit = ScriptingUtils.getConditionScope("limit");
+        ConditionScope owner = ScriptingUtils.getConditionScope("owner");
+
+        ConditionScope checkVariableLower = ScriptingUtils.getConditionScope("check_variable");
+        checkVariableLower.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        checkVariableLower.addCondition(ScriptingUtils.getCondition("value", Double.toString(i - 0.1)));
+
+        ConditionScope not = ScriptingUtils.getNOTCondition();
+        ConditionScope checkVariableUpper = ScriptingUtils.getConditionScope("check_variable");
+        checkVariableUpper.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        checkVariableUpper.addCondition(ScriptingUtils.getCondition("value", Double.toString(i + 0.1)));
+        not.addCondition(checkVariableUpper);
+
+        owner.addCondition(checkVariableLower);
+        owner.addCondition(not);
+        limit.addCondition(owner);
+
+        return limit;
+    }
+
+    protected EffectScope getRenamingImmediateRandomOwnedRandomCountry(int i) {
+
+        EffectScope randomCountry = ScriptingUtils.getEffectScope("random_country");
+
+        ConditionScope limit = ScriptingUtils.getConditionScope("limit");
+        limit.addCondition(ScriptingUtils.getCondition("has_country_flag", "dynamic_loc_potential_country_target"));
+
+        randomCountry.setLimit(limit);
+
+        randomCountry.addEffect(ScriptingUtils.getEffect("set_country_flag", "dynamic_loc_country_target_" + i));
+        randomCountry.addEffect(ScriptingUtils.getEffect("set_country_flag", "dynamic_loc_slot_selector"));
+        randomCountry.addEffect(ScriptingUtils.getEffect("clr_country_flag", "dynamic_loc_potential_country_target"));
+
+        return randomCountry;
+    }
+
+    protected List<BasicEffect> getRenamings(CountryRenaming countryRenaming) {
+
+        List<BasicEffect> renamings = new ArrayList<>();
+
+        int numberOfGroups = countryRenaming.getGovernmentGroupings().asMap().entrySet().size();
+
+        for (Map.Entry<String, Collection<Government>> entry : countryRenaming.getGovernmentGroupings().asMap().entrySet()) {
+            EffectScope dynamicLocSlots = ScriptingUtils.getEffectScope("dynamic_loc_slots");
+
+            dynamicLocSlots.setLimit(getDynamicLocLimit(numberOfGroups, entry, countryRenaming.getCountry().getTag()));
+
+            EffectScope stateScope = ScriptingUtils.getEffectScope("state_scope");
+            stateScope.addEffect(ScriptingUtils.getEffect("change_region_name", "\"@" + countryRenaming.getCountry().getTag() + " " + entry.getKey() + "\""));
+
+            dynamicLocSlots.addEffect(stateScope);
+
+            renamings.add(dynamicLocSlots);
+        }
+
+        return renamings;
+    }
+
+    protected ConditionScope getDynamicLocLimit(int numberOfGroups, Map.Entry<String, Collection<Government>> entry, String tag) {
+        ConditionScope limit = ScriptingUtils.getConditionScope("limit");
+
+        limit.addCondition(ScriptingUtils.getCondition("has_province_modifier", "dynamic_loc_slot_selector"));
+
+        ConditionScope tagScope = ScriptingUtils.getConditionScope(tag);
+
+        tagScope.addCondition(ScriptingUtils.getCondition("has_country_flag", "dynamic_loc_slot_selector"));
+
+        if (numberOfGroups != 1 && entry.getValue().size() != 1) {
+            ConditionScope or = ScriptingUtils.getORCondition();
+
+            entry.getValue().forEach(government -> or.addCondition(ScriptingUtils.getCondition("government", government.getName())));
+
+            tagScope.addCondition(or);
+        } else if (numberOfGroups != 1) {
+            entry.getValue().forEach(government -> tagScope.addCondition(ScriptingUtils.getCondition("government", government.getName())));
+        }
+
+        limit.addCondition(tagScope);
+
+        return limit;
     }
 
     public static void main(String[] args) {
