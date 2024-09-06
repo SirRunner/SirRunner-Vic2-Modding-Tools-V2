@@ -32,7 +32,7 @@ public class DynamicLocCountrySetter {
     protected String governmentsFilename;
     protected String outputFilename;
 
-    protected final int NUMBER_OF_COUNTRY_SLOTS = 8;
+    protected final int NUMBER_OF_COUNTRY_SLOTS = 24;
 
     public void setCountriesFilename(String countriesFilename) {
         this.countriesFilename = countriesFilename;

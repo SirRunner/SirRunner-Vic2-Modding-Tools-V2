@@ -33,7 +33,7 @@ public class Region {
                 Logger.info("File contains unhandled key: " + key);
             } else {
                 String value = StringUtils.trim(line.get(key));
-                if (!StringUtils.equalsIgnoreCase(DEFAULT, value) && !StringUtils.isEmpty(value)) {
+                if ((!StringUtils.equalsIgnoreCase(DEFAULT, value) || StringUtils.equalsIgnoreCase(line.get(CODE), "hyphen_loc")) && !StringUtils.isEmpty(value)) {
                     setByName(key, StringUtils.trim(value));
                 }
             }
