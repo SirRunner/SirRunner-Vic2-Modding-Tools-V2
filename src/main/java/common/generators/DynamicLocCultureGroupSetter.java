@@ -25,7 +25,7 @@ public class DynamicLocCultureGroupSetter {
     protected String culturesFilename;
     protected String outputFilename;
 
-    protected final int NUMBER_OF_CULTURE_GROUP_SLOTS = 8;
+    protected final int NUMBER_OF_CULTURE_GROUP_SLOTS = 40;
 
     public void setCulturesLocFilename(String culturesLocFilename) {
         this.culturesLocFilename = culturesLocFilename;
@@ -207,7 +207,7 @@ public class DynamicLocCultureGroupSetter {
 
         randomOwned.setLimit(getRenamingImmediateRandomOwnedLimit(i));
 
-        EffectScope countrySlot = ScriptingUtils.getEffectScope("dynamic_loc_culture_group_slot_" + i);
+        EffectScope countrySlot = ScriptingUtils.getEffectScope("dynamic_loc_slot_" + i);
         EffectScope provinceModifier = ScriptingUtils.getEffectScope("add_province_modifier");
         provinceModifier.addEffect(ScriptingUtils.getEffect("name", "dynamic_loc_slot_selector"));
         provinceModifier.addEffect(ScriptingUtils.getEffect("duration", "1"));

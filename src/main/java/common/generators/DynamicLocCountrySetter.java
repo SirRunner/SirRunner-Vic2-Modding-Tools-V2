@@ -32,7 +32,7 @@ public class DynamicLocCountrySetter {
     protected String governmentsFilename;
     protected String outputFilename;
 
-    protected final int NUMBER_OF_COUNTRY_SLOTS = 24;
+    protected final int NUMBER_OF_COUNTRY_SLOTS = 40;
 
     public void setCountriesFilename(String countriesFilename) {
         this.countriesFilename = countriesFilename;
@@ -263,7 +263,7 @@ public class DynamicLocCountrySetter {
 
         randomOwned.setLimit(getRenamingImmediateRandomOwnedLimit(i));
 
-        EffectScope countrySlot = ScriptingUtils.getEffectScope("dynamic_loc_country_slot_" + i);
+        EffectScope countrySlot = ScriptingUtils.getEffectScope("dynamic_loc_slot_" + i);
         EffectScope provinceModifier = ScriptingUtils.getEffectScope("add_province_modifier");
         provinceModifier.addEffect(ScriptingUtils.getEffect("name", "dynamic_loc_slot_selector"));
         provinceModifier.addEffect(ScriptingUtils.getEffect("duration", "1"));

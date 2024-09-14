@@ -24,7 +24,7 @@ import java.util.*;
 
 public class DynamicLocRegionSetter extends RenamingDecisionGenerator {
 
-    protected final int NUMBER_OF_REGION_SLOTS = 8;
+    protected final int NUMBER_OF_REGION_SLOTS = 40;
 
     protected enum WASTELAND_REGIONS {
         GON_796, // White Mountains
@@ -238,7 +238,7 @@ public class DynamicLocRegionSetter extends RenamingDecisionGenerator {
 
         randomOwned.setLimit(getRenamingImmediateRandomOwnedLimit(i));
 
-        EffectScope regionSlot = ScriptingUtils.getEffectScope("dynamic_loc_region_slot_" + i);
+        EffectScope regionSlot = ScriptingUtils.getEffectScope("dynamic_loc_slot_" + i);
         EffectScope provinceModifier = ScriptingUtils.getEffectScope("add_province_modifier");
         provinceModifier.addEffect(ScriptingUtils.getEffect("name", "dynamic_loc_slot_selector"));
         provinceModifier.addEffect(ScriptingUtils.getEffect("duration", "1"));
