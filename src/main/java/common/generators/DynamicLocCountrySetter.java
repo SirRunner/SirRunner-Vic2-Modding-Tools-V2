@@ -147,7 +147,7 @@ public class DynamicLocCountrySetter {
     protected BasicEffect getHandlerChangeVariableEffect() {
         EffectScope effectScope = ScriptingUtils.getEffectScope("change_variable");
 
-        effectScope.addEffect(ScriptingUtils.getEffect("which", "dynamic_loc_names"));
+        effectScope.addEffect(ScriptingUtils.getEffect("which", "dynamic_loc_names_country"));
         effectScope.addEffect(ScriptingUtils.getEffect("value", "1"));
 
         return effectScope;
@@ -160,13 +160,13 @@ public class DynamicLocCountrySetter {
         ConditionScope owner = ScriptingUtils.getConditionScope("owner");
 
         ConditionScope lowerScope = ScriptingUtils.getConditionScope("check_variable");
-        lowerScope.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        lowerScope.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names_country"));
         lowerScope.addCondition(ScriptingUtils.getCondition("value", Double.toString(i - 0.1)));
         owner.addCondition(lowerScope);
 
         ConditionScope not = ScriptingUtils.getNOTCondition();
         ConditionScope upperScope = ScriptingUtils.getConditionScope("check_variable");
-        upperScope.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        upperScope.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names_country"));
         upperScope.addCondition(ScriptingUtils.getCondition("value", Double.toString(i + 0.1)));
         not.addCondition(upperScope);
         owner.addCondition(not);
@@ -281,12 +281,12 @@ public class DynamicLocCountrySetter {
         ConditionScope owner = ScriptingUtils.getConditionScope("owner");
 
         ConditionScope checkVariableLower = ScriptingUtils.getConditionScope("check_variable");
-        checkVariableLower.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        checkVariableLower.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names_country"));
         checkVariableLower.addCondition(ScriptingUtils.getCondition("value", Double.toString(i - 0.1)));
 
         ConditionScope not = ScriptingUtils.getNOTCondition();
         ConditionScope checkVariableUpper = ScriptingUtils.getConditionScope("check_variable");
-        checkVariableUpper.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names"));
+        checkVariableUpper.addCondition(ScriptingUtils.getCondition("which", "dynamic_loc_names_country"));
         checkVariableUpper.addCondition(ScriptingUtils.getCondition("value", Double.toString(i + 0.1)));
         not.addCondition(checkVariableUpper);
 
