@@ -221,11 +221,11 @@ public class Event {
             string.append("\tis_triggered_only = yes\n");
         }
 
-        if (!getTrigger().isEmpty()) {
+        if (getTrigger() != null && !getTrigger().isEmpty()) {
             string.append(getTrigger().toString());
         }
 
-        if (!getMeanTimeToHappen().isEmpty()) {
+        if (getMeanTimeToHappen() != null && !getMeanTimeToHappen().isEmpty()) {
             string.append(getMeanTimeToHappen().toString());
         }
 

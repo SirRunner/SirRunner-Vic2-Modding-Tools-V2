@@ -1,5 +1,6 @@
 package historyfile.generators;
 
+import events.generators.ClaimsCBGenerator;
 import historyfile.province.BaseProvinceHistoryFile;
 import historyfile.province.ProvinceHistoryFile;
 import historyfile.reader.ProvinceHistoryFileCSVReader;
@@ -27,6 +28,7 @@ public class ProvinceHistoryFileGenerator {
     protected String regionsFilename;
     protected String continentsFilename;
     protected String climatesFilename;
+    protected String claimsEventFilename;
 
     public void setProvinceHistoryFolder(String provinceHistoryFolder) {
         this.provinceHistoryFolder = provinceHistoryFolder;
@@ -54,6 +56,10 @@ public class ProvinceHistoryFileGenerator {
 
     public void setClimatesFilename(String climatesFilename) {
         this.climatesFilename = climatesFilename;
+    }
+
+    public void setClaimsEventFilename(String claimsEventFilename) {
+        this.claimsEventFilename = claimsEventFilename;
     }
 
     protected void compareDefinitionsAndCSVEntryNames(MapDefinitions definitionsEntry, ProvinceHistoryFile historyFile, int id) {
@@ -149,6 +155,9 @@ public class ProvinceHistoryFileGenerator {
 
         ClimatesWriter climatesWriter = new ClimatesWriter(climatesFilename, orderedProvinceHistoryFiles);
         climatesWriter.writeFile();
+
+        ClaimsCBGenerator claimsCBGenerator = new ClaimsCBGenerator(claimsEventFilename, "CB and Cores", 2900, 2999, regions);
+        claimsCBGenerator.generate();
     }
 
     public static void main(String[] args) {
@@ -162,6 +171,7 @@ public class ProvinceHistoryFileGenerator {
             generator.setRegionsFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/region.txt");
             generator.setContinentsFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/continent.txt");
             generator.setClimatesFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/climate.txt");
+            generator.setClaimsEventFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/events/Claim CBs.txt");
 
             generator.run();
         } catch (Exception e) {

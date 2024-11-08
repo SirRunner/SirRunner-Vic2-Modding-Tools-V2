@@ -51,7 +51,7 @@ public class Region {
     public Integer getSortingId() {
         String[] codeParts = StringUtils.split(code, "_");
 
-        if (StringUtils.isNumeric(codeParts[1])) {
+        if (StringUtils.isNumeric(codeParts[1]) && !isLocRegion()) {
             return Integer.parseInt(codeParts[1]);
         } else if (!isLocRegion()) {
             Logger.error("Province id part of " + getCode() + " is not numeric");
