@@ -1,11 +1,13 @@
 package historyfile.generators;
 
+import com.google.common.collect.Sets;
 import historyfile.pops.PopHistoryFile;
 import historyfile.reader.PopHistoryFileCSVReader;
 import historyfile.writer.PopHistoryFileWriter;
 import utils.Utils;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Map;
 
 public class PopHistoryFileGenerator {
@@ -27,7 +29,7 @@ public class PopHistoryFileGenerator {
 
         /* Deletes all old pop history files */
         File outputFolder = new File(popHistoryFolder);
-        Utils.clearFolder(outputFolder);
+        Utils.clearFolder(outputFolder, Sets.newHashSet("_Scripting.txt".toUpperCase()));
 
         for (String filenamePrefix: popHistoryFiles.keySet()) {
             String filename = filenamePrefix + ".txt";
