@@ -3,6 +3,7 @@ package utils.paradox.scripting.effects;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 import utils.paradox.nodes.Node;
+import utils.paradox.scripting.ScriptingUtils;
 import utils.paradox.scripting.conditions.ConditionScope;
 
 import java.util.ArrayList;
@@ -66,6 +67,10 @@ public class EffectScope extends BasicEffect {
         }
 
         effects.forEach(this::addEffect);
+    }
+
+    public void addEffect(String name, String value) {
+        addEffect(ScriptingUtils.getEffect(name, value));
     }
 
     public ConditionScope getLimit() {

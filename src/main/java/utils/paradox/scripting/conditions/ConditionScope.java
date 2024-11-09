@@ -3,6 +3,7 @@ package utils.paradox.scripting.conditions;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 import utils.paradox.nodes.Node;
+import utils.paradox.scripting.ScriptingUtils;
 import utils.paradox.scripting.effects.BasicEffect;
 
 import java.util.ArrayList;
@@ -55,6 +56,15 @@ public class ConditionScope extends BasicCondition {
             this.conditions.add(condition);
             condition.setIndent(getIndent() + 1);
         }
+    }
+
+    public void addCondition(String name, String value) {
+        addCondition(ScriptingUtils.getCondition(name, value));
+    }
+
+    public void addCondition(String name, String value, ConditionScope scope) {
+        scope.addCondition(name, value);
+        addCondition(scope);
     }
 
     @Override
