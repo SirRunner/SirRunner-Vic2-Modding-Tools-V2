@@ -3,6 +3,7 @@ package decisions.nodes;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 import utils.paradox.nodes.Node;
+import utils.paradox.scripting.ScriptingUtils;
 import utils.paradox.scripting.conditions.BasicCondition;
 import utils.paradox.scripting.conditions.Condition;
 import utils.paradox.scripting.conditions.ConditionScope;
@@ -53,6 +54,10 @@ public class Potential extends DecisionPart {
         } else {
             Logger.error("condition is null");
         }
+    }
+
+    public void addCondition(String value, String name) {
+        addCondition(ScriptingUtils.getCondition(value, name));
     }
 
     public String toString() {

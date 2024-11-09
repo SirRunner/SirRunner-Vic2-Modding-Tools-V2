@@ -1,5 +1,6 @@
 package historyfile.generators;
 
+import decisions.generators.ClaimsCBViewerGenerator;
 import events.generators.ClaimsCBGenerator;
 import historyfile.province.BaseProvinceHistoryFile;
 import historyfile.province.ProvinceHistoryFile;
@@ -29,6 +30,7 @@ public class ProvinceHistoryFileGenerator {
     protected String continentsFilename;
     protected String climatesFilename;
     protected String claimsEventFilename;
+    protected String claimsDecisionFilename;
 
     public void setProvinceHistoryFolder(String provinceHistoryFolder) {
         this.provinceHistoryFolder = provinceHistoryFolder;
@@ -60,6 +62,10 @@ public class ProvinceHistoryFileGenerator {
 
     public void setClaimsEventFilename(String claimsEventFilename) {
         this.claimsEventFilename = claimsEventFilename;
+    }
+
+    public void setClaimsDecisionFilename(String claimsDecisionFilename) {
+        this.claimsDecisionFilename = claimsDecisionFilename;
     }
 
     protected void compareDefinitionsAndCSVEntryNames(MapDefinitions definitionsEntry, ProvinceHistoryFile historyFile, int id) {
@@ -158,6 +164,9 @@ public class ProvinceHistoryFileGenerator {
 
         ClaimsCBGenerator claimsCBGenerator = new ClaimsCBGenerator(claimsEventFilename, "CB and Cores", 2900, 2999, regions);
         claimsCBGenerator.generate();
+
+        ClaimsCBViewerGenerator claimsCBViewerGenerator = new ClaimsCBViewerGenerator(claimsDecisionFilename, "Quality of Life Information", regions);
+        claimsCBViewerGenerator.generate();
     }
 
     public static void main(String[] args) {
@@ -172,6 +181,7 @@ public class ProvinceHistoryFileGenerator {
             generator.setContinentsFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/continent.txt");
             generator.setClimatesFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/climate.txt");
             generator.setClaimsEventFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/events/Claim CBs.txt");
+            generator.setClaimsDecisionFilename("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/decisions/_QOL Information.txt");
 
             generator.run();
         } catch (Exception e) {

@@ -110,8 +110,20 @@ public class Decision {
         this.comment = comment;
     }
 
+    public static String standardizeName(String word) {
+        if (StringUtils.isEmpty(word)) {
+            return "";
+        }
+
+        return StringUtils.replace(StringUtils.lowerCase(word), " ", "_");
+    }
+
     public String toString() {
         StringBuilder string = new StringBuilder();
+
+        if (!StringUtils.isEmpty(getComment())) {
+            string.append(StringUtils.repeat("\t", getIndent())).append("# ").append(getComment()).append("\n");
+        }
 
         string.append(StringUtils.repeat("\t", getIndent())).append(getName()).append(" = {\n");
 
