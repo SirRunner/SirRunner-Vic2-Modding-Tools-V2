@@ -65,34 +65,6 @@ public class CountryListReader extends BaseReader {
         return countries;
     }
 
-    protected Country getCountry(String line) {
-        if (StringUtils.isEmpty(StringUtils.trim(line)) || StringUtils.startsWith(line, ParadoxParsingUtils.COMMENT_START)) {
-            return null;
-        }
-
-        String standardizedLine = StringUtils.trim(line);
-
-        if (StringUtils.startsWith(standardizedLine, "dynamic_tags")) {
-
-        }
-
-        /* The game assumes the tag is the first 3 characters once leading whitespace is removed */
-        String tag = StringUtils.substring(line, 0, 3);
-
-        String[] parts = line.split("\"");
-
-        /* Should never happen, but just in case */
-        if (parts.length < 3) {
-            Logger.error("Unparsable Line: " + line);
-            return null;
-        }
-
-        /* There should be 3 parts created, at a minimum -- the first that encompasses `tag = `, the second that has the path, and a third to handles any text after the closing quote */
-        String path = parts[1];
-
-        return new Country("", "");
-    }
-
     public static void main(String[] args) {
         try {
             CountryListReader reader = new CountryListReader("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA\\common\\countries.txt");
