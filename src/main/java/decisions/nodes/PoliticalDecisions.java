@@ -18,6 +18,10 @@ public class PoliticalDecisions {
         this();
 
         for (Node innerNode : node.getNodes()) {
+            // Comments that come before a political decisions get parsed as a separate node
+            if (node.hasComment() && (node.getNodes() == null || node.getNodes().isEmpty())) {
+                continue;
+            }
             addDecision(new Decision(innerNode));
         }
     }

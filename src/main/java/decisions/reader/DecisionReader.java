@@ -54,7 +54,7 @@ public class DecisionReader extends BaseReader {
 
     public static void main(String[] args) {
         try {
-            DecisionReader reader = new DecisionReader("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA\\decisions\\Isengard.txt");
+            DecisionReader reader = new DecisionReader("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA\\decisions\\Barding Realm.txt");
 
             reader.readFile();
         } catch (Exception e) {

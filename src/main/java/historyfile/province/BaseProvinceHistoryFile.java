@@ -30,6 +30,7 @@ public abstract class BaseProvinceHistoryFile {
     protected List<Factory> factories;
     protected boolean slave;
     protected int colonial;
+    protected List<PartyLoyalty> partyLoyalties;
     protected String comment;
 
     public int getId() {
@@ -267,6 +268,42 @@ public abstract class BaseProvinceHistoryFile {
         }
     }
 
+    public List<PartyLoyalty> getPartyLoyalties() {
+        return partyLoyalties;
+    }
+
+    public void setPartyLoyalties(List<PartyLoyalty> partyLoyalties) {
+        this.partyLoyalties = partyLoyalties;
+    }
+
+    public void setPartyLoyalties(String partyLoyalties) {
+        String[] loyaltyArray = StringUtils.split(partyLoyalties, " ");
+        this.partyLoyalties = new ArrayList<>();
+
+        double count = 1;
+
+        for (String partyLoyalty : loyaltyArray) {
+            if (StringUtils.isNumeric(StringUtils.remove(partyLoyalty, "."))) {
+                count = Double.parseDouble(partyLoyalty);
+                continue;
+            }
+
+            addPartyLoyalty(partyLoyalty, count);
+            count = 1;
+        }
+    }
+
+    public void addPartyLoyalty(String ideologyName, double total) {
+        addPartyLoyalty(new PartyLoyalty(ideologyName, total));
+    }
+
+    public void addPartyLoyalty(PartyLoyalty partyLoyalty) {
+        if (this.partyLoyalties == null) {
+            this.partyLoyalties = new ArrayList<>();
+        }
+        this.partyLoyalties.add(partyLoyalty);
+    }
+
     public String getComment() {
         return comment;
     }
@@ -331,6 +368,14 @@ public abstract class BaseProvinceHistoryFile {
             builder.append("\tlevel = ").append(factory.getLevel()).append("\n");
             builder.append("\tbuilding = ").append(factory.getType()).append("\n");
             builder.append("\tupgrade = yes\n");
+            builder.append("}\n");
+        }
+
+        for (PartyLoyalty partyLoyalty: getPartyLoyalties()) {
+            builder.append("\n");
+            builder.append("party_loyalty = {\n");
+            builder.append("\tideology = ").append(partyLoyalty.getIdeology()).append("\n");
+            builder.append("\tloyalty_value = ").append(partyLoyalty.getValue()).append("\n");
             builder.append("}\n");
         }
 

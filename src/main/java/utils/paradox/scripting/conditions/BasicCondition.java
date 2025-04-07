@@ -18,6 +18,7 @@ public abstract class BasicCondition extends ScriptItem {
         IS_VASSAL,
         MONTH,
         NATIONALVALUE,
+        RULING_PARTY_IDEOLOGY,
         TAG,
         VASSAL_OF,
         WAR,

@@ -37,6 +37,15 @@ public class Decision {
     }
 
     protected void addNodeByName(Node node) {
+
+        if (node.hasComment()) {
+            setComment(node.getComment());
+        }
+
+        if (StringUtils.isEmpty(node.getName())) {
+            return;
+        }
+
         switch(node.getName()) {
             case PICTURE -> setPicture(new Picture(node));
             case POTENTIAL -> setPotential(new Potential(node));

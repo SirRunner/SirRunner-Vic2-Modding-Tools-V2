@@ -1,40 +1,45 @@
 package test;
 
-import map.definitions.MapDefinitions;
-import map.reader.MapDefinitionsReader;
-import map.reader.RegionReader;
-import map.regions.Region;
-import utils.Logger;
+import common.Ideology;
+import common.readers.IdeologyReader;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Testing {
     public static void main(String[] args) throws Exception {
-        MapDefinitionsReader definitionsReader = new MapDefinitionsReader("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/definition.csv");
-        RegionReader regionReader = new RegionReader("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/map/region.txt");
 
-        Map<Integer, MapDefinitions> mapDefinitionsEntrys = definitionsReader.readFile();
-        Logger.info("Read " + mapDefinitionsEntrys.size() + " map definitions");
+        List<Ideology.IdeologyGroup> ideologyGroups = new IdeologyReader("C:/Program Files (x86)/Steam/steamapps/common/Victoria 2/mod/TTA/common/ideologies.txt").readFile();
 
-        Map<String, Region> codeToRegions = regionReader.readFile();
-        Logger.info("Read " + codeToRegions.size() + " regions");
+        System.out.println( "promotion_ideologies;Promote Interest Groups (only affects election results)");
 
-        List<Region> regions = codeToRegions.values().stream().filter(region -> region.getSortingId() != 0).sorted((o1, o2) -> {
-            if (o1.getSortingId() > o2.getSortingId()) {
-                return 1;
-            } else if (o2.getSortingId() > o1.getSortingId()) {
-                return -1;
+        for (Ideology.IdeologyGroup ideologyGroup : ideologyGroups) {
+            for (Ideology ideology : ideologyGroup.getIdeologies()) {
+                System.out.printf("promote_%s;Promote %s;x\n", ideology.getName(), Arrays.stream(StringUtils.split(ideology.getName(),"_")).map(word -> {
+                    if (Arrays.asList("of","the").contains(word)) {
+                        return word;
+                    }
+
+                    return StringUtils.capitalize(word);
+                }).collect(Collectors.joining(" ")));
             }
-
-            return 0;
-        }).toList();
-
-        for (Region region : regions) {
-            System.out.println("add_claim_" + region.getCode() + "_loc = { } # §WWe will gain claims over §!§Y" + region.getName() + "§!");
-            System.out.println("remove_claim_" + region.getCode() + "_loc = { } # §WWe will lose claims over §!§Y" + region.getName() + "§!");
-            System.out.println("claim_status_owns_" + region.getCode() + "_loc = { } # §Y" + region.getName() + "§!: §GOwned§!");
-            System.out.println("claim_status_doesnt_own_" + region.getCode() + "_loc = { } # §Y" + region.getName() + "§!: §RUnowned§!");
         }
+
+        System.out.println( "demotion_ideologies;Reduce Interest Groups (only affects election results)");
+
+        for (Ideology.IdeologyGroup ideologyGroup : ideologyGroups) {
+            for (Ideology ideology : ideologyGroup.getIdeologies()) {
+                System.out.printf("demote_%s;Promote %s;x\n", ideology.getName(), Arrays.stream(StringUtils.split(ideology.getName(),"_")).map(word -> {
+                    if (Arrays.asList("of","the").contains(word)) {
+                        return word;
+                    }
+
+                    return StringUtils.capitalize(word);
+                }).collect(Collectors.joining(" ")));
+            }
+        }
+
     }
 }

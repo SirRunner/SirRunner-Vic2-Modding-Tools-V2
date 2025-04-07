@@ -47,7 +47,7 @@ public class ImageTesting {
 
     public static void main(String[] args) throws Exception {
 
-        BufferedImage img = ImageIO.read(new File("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA\\tgc.bmp"));
+        BufferedImage img = ImageIO.read(new File("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Victoria 2\\mod\\TTA\\test.bmp"));
         BufferedImage output = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         for (int x = 0; x < img.getWidth(); x++) {
