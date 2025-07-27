@@ -3,6 +3,7 @@ package events.nodes;
 import org.apache.commons.lang3.StringUtils;
 import utils.Logger;
 import utils.paradox.nodes.Node;
+import utils.paradox.scripting.ScriptingUtils;
 import utils.paradox.scripting.effects.BasicEffect;
 import utils.paradox.scripting.effects.Effect;
 import utils.paradox.scripting.effects.EffectScope;
@@ -56,6 +57,10 @@ public class Option extends EventPart {
         for (BasicEffect effect : effects) {
             addEffect(effect);
         }
+    }
+
+    public void addEffect(String left, String right) {
+        addEffect(ScriptingUtils.getEffect(left, right));
     }
 
     public void addEffect(BasicEffect effect) {

@@ -8,6 +8,7 @@ import utils.paradox.nodes.Node;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Culture {
     protected String name;
@@ -117,12 +118,16 @@ public class Culture {
 
         String[] names = builder.build().parseLine(node.getValue());
 
-        for (String name: names) {
+        for (String name : names) {
             addFirstName(name);
         }
     }
 
     public void addFirstName(String firstName) {
+        if (StringUtils.isEmpty(firstName) || "null".equals(firstName)) {
+            return;
+        }
+
         this.firstNames.add(firstName);
     }
 
@@ -141,12 +146,31 @@ public class Culture {
 
         String[] names = builder.build().parseLine(node.getValue());
 
-        for (String name: names) {
+        for (String name : names) {
             addLastName(name);
         }
     }
 
+    public String getRandomLeaderName() {
+        Random random = new Random();
+
+        try {
+            int firstNameIndex = random.nextInt(getFirstNames().size());
+            int lastNameIndex = random.nextInt(getLastNames().size());
+
+            return getFirstNames().get(firstNameIndex) + " " + getLastNames().get(lastNameIndex);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "First Last";
+    }
+
     public void addLastName(String lastName) {
+        if (StringUtils.isEmpty(lastName) || "null".equals(lastName)) {
+            return;
+        }
+
         this.lastNames.add(lastName);
     }
 
@@ -155,9 +179,11 @@ public class Culture {
         protected String leader;
         protected String unit;
         protected List<Culture> cultures;
+        protected String union;
 
         public static final String LEADER = "leader";
         public static final String UNIT = "unit";
+        public static final String UNION = "union";
 
         public CultureGroup() {
             this.cultures = new ArrayList<>();
@@ -182,6 +208,7 @@ public class Culture {
             switch (node.getName().toLowerCase()) {
                 case LEADER -> setLeader(node);
                 case UNIT -> setUnit(node);
+                case UNION -> setUnion(node);
                 default -> addCulture(new Culture(node));
             }
         }
@@ -228,6 +255,33 @@ public class Culture {
 
         public void addCulture(Culture culture) {
             this.cultures.add(culture);
+        }
+
+        public String getUnion() {
+            return union;
+        }
+
+        public void setUnion(Node node) {
+            setUnion(node.getValue());
+        }
+
+        public void setUnion(String union) {
+            this.union = union;
+        }
+
+        public String getRandomLeaderName() {
+            return getCultures().get(0).getRandomLeaderName();
+        }
+
+        public String getRandomLeaderName(String cultureName) {
+            for (Culture culture : cultures) {
+                if (cultureName.equalsIgnoreCase(culture.getName())) {
+                    return culture.getRandomLeaderName();
+                }
+            }
+
+            Logger.warn("Unable to find culture with name " + cultureName + " in the " + getName() + " culture group");
+            return getRandomLeaderName();
         }
     }
 }

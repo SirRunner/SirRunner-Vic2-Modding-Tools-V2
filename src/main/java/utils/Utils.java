@@ -66,4 +66,8 @@ public class Utils {
     public static String getCSV(List<String> strings, String delimiter) {
         return StringUtils.join(strings, delimiter);
     }
+
+    public static boolean isEven(int number) {
+        return number % 2 == 0;
+    }
 }

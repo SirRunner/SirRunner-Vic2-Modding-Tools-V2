@@ -13,7 +13,7 @@ public abstract class AbstractMultiEventGenerator extends AbstractEventGenerator
         super(filename, headerName, lowerId, upperId);
     }
 
-    protected List<Event> getEvents() {
+    protected List<Event> getEvents() throws Exception {
 
         List<Event> events = new ArrayList<>();
 
@@ -28,7 +28,7 @@ public abstract class AbstractMultiEventGenerator extends AbstractEventGenerator
         return events;
     }
 
-    protected Event getEvent(int id) {
+    protected Event getEvent(int id) throws Exception {
 
         Event event = new Event();
 
@@ -92,7 +92,7 @@ public abstract class AbstractMultiEventGenerator extends AbstractEventGenerator
         return getImmediate();
     }
 
-    protected abstract List<Option> getOptions(int id);
+    protected abstract List<Option> getOptions(int id) throws Exception;
 
     public void generate() {
 
