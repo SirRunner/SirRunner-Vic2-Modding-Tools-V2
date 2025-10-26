@@ -101,7 +101,7 @@ public class MilitaryLeaderRecruitmentGenerator extends AbstractMultiEventGenera
 
         EffectScope addCountryModifier2 = ScriptingUtils.getEffectScope("add_country_modifier");
         addCountryModifier2.addEffect("name", getCountryModifierName(id));
-        addCountryModifier2.addEffect("duration", Integer.toString(NUM_YEARS_BETWEEN_RECRUITMENT * 5));
+        addCountryModifier2.addEffect("duration", Integer.toString(NUM_YEARS_BETWEEN_RECRUITMENT * 365));
 
         ownerEffect2.addEffect(addCountryModifier2);
 
