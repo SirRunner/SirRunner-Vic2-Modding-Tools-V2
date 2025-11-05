@@ -134,7 +134,7 @@ public class RegionRenaming {
     }
 
     public String getVariableName() {
-        return StringUtils.stripAccents(StringUtils.replace(StringUtils.lowerCase(getStartingName()), " ", "_") + "_name");
+        return StringUtils.remove(StringUtils.stripAccents(StringUtils.replace(StringUtils.lowerCase(getStartingName()), " ", "_") + "_name"), "’");
     }
 
     public String getLocalizationName() {
