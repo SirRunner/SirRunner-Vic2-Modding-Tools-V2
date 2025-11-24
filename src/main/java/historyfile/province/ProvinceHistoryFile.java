@@ -20,6 +20,10 @@ public class ProvinceHistoryFile extends BaseProvinceHistoryFile {
     public static final String RAILROAD = "railroad";
     public static final String FORT = "fort";
     public static final String NAVAL_BASE = "naval_base";
+    public static final String BARRACKS = "barracks";
+    public static final String SCRIPTORIUM = "scriptorium";
+    public static final String MARKET_SQUARE = "market_square";
+    public static final String PUBLIC_HOUSE = "public_house";
     public static final String GUILDS = "guilds";
     public static final String IS_SLAVE = "is_slave";
     public static final String COLONIAL = "colonial";
@@ -28,7 +32,7 @@ public class ProvinceHistoryFile extends BaseProvinceHistoryFile {
 
     public static final String DEFAULT = "-";
 
-    public static Set<String> HANDLED_COLUMNS = new HashSet<>(Arrays.asList(ID, NAME, OWNER, CONTROLLER, CORES, TRADE_GOODS, LIFE_RATING, TERRAIN, CONTINENT, CLIMATE, RAILROAD, FORT, NAVAL_BASE, GUILDS, IS_SLAVE, COLONIAL, PARTY_LOYALTY, COMMENT));
+    public static Set<String> HANDLED_COLUMNS = new HashSet<>(Arrays.asList(ID, NAME, OWNER, CONTROLLER, CORES, TRADE_GOODS, LIFE_RATING, TERRAIN, CONTINENT, CLIMATE, RAILROAD, FORT, NAVAL_BASE, GUILDS, IS_SLAVE, COLONIAL, PARTY_LOYALTY, COMMENT, BARRACKS, SCRIPTORIUM, MARKET_SQUARE, PUBLIC_HOUSE));
 
     public ProvinceHistoryFile() {
         this.cores = new ArrayList<>();
@@ -71,6 +75,10 @@ public class ProvinceHistoryFile extends BaseProvinceHistoryFile {
             case COLONIAL -> setColonial(value);
             case PARTY_LOYALTY -> setPartyLoyalties(value);
             case COMMENT -> setComment(value);
+            case BARRACKS -> setBarracksLevel(value);
+            case SCRIPTORIUM -> setScriptoriumLevel(value);
+            case MARKET_SQUARE -> setMarketSquareLevel(value);
+            case PUBLIC_HOUSE -> setPublicHouseLevel(value);
         }
     }
 }

@@ -27,6 +27,10 @@ public abstract class BaseProvinceHistoryFile {
     protected int railroadLevel;
     protected int fortLevel;
     protected int navalBaseLevel;
+    protected int barracksLevel;
+    protected int scriptoriumLevel;
+    protected int marketSquareLevel;
+    protected int publicHouseLevel;
     protected List<Factory> factories;
     protected boolean slave;
     protected int colonial;
@@ -240,6 +244,70 @@ public abstract class BaseProvinceHistoryFile {
         }
     }
 
+    public int getBarracksLevel() {
+        return barracksLevel;
+    }
+
+    public void setBarracksLevel(int barracksLevel) {
+        this.barracksLevel = barracksLevel;
+    }
+
+    public void setBarracksLevel(String barracksLevel) {
+        try {
+            setBarracksLevel(Integer.parseInt(barracksLevel));
+        } catch (NumberFormatException e) {
+            setBarracksLevel(0);
+        }
+    }
+
+    public int getScriptoriumLevel() {
+        return scriptoriumLevel;
+    }
+
+    public void setScriptoriumLevel(int scriptoriumLevel) {
+        this.scriptoriumLevel = scriptoriumLevel;
+    }
+
+    public void setScriptoriumLevel(String scriptoriumLevel) {
+        try {
+            setScriptoriumLevel(Integer.parseInt(scriptoriumLevel));
+        } catch (NumberFormatException e) {
+            setScriptoriumLevel(0);
+        }
+    }
+
+    public int getMarketSquareLevel() {
+        return marketSquareLevel;
+    }
+
+    public void setMarketSquareLevel(int marketSquareLevel) {
+        this.marketSquareLevel = marketSquareLevel;
+    }
+
+    public void setMarketSquareLevel(String marketSquareLevel) {
+        try {
+            setMarketSquareLevel(Integer.parseInt(marketSquareLevel));
+        } catch (NumberFormatException e) {
+            setMarketSquareLevel(0);
+        }
+    }
+
+    public int getPublicHouseLevel() {
+        return publicHouseLevel;
+    }
+
+    public void setPublicHouseLevel(int publicHouseLevel) {
+        this.publicHouseLevel = publicHouseLevel;
+    }
+
+    public void setPublicHouseLevel(String publicHouseLevel) {
+        try {
+            setPublicHouseLevel(Integer.parseInt(publicHouseLevel));
+        } catch (NumberFormatException e) {
+            setPublicHouseLevel(0);
+        }
+    }
+
     public boolean isSlave() {
         return slave;
     }
@@ -355,6 +423,22 @@ public abstract class BaseProvinceHistoryFile {
             builder.append("railroad = ").append(getRailroadLevel()).append("\n");
         }
 
+        if (getBarracksLevel() > 0) {
+            builder.append("barracks = ").append(getBarracksLevel()).append("\n");
+        }
+
+        if (getScriptoriumLevel() > 0) {
+            builder.append("scriptorium = ").append(getScriptoriumLevel()).append("\n");
+        }
+
+        if (getMarketSquareLevel() > 0) {
+            builder.append("market_square = ").append(getMarketSquareLevel()).append("\n");
+        }
+
+        if (getPublicHouseLevel() > 0) {
+            builder.append("public_house = ").append(getPublicHouseLevel()).append("\n");
+        }
+
         if (isSlave()) {
             builder.append("is_slave = yes\n");
         }
@@ -371,7 +455,7 @@ public abstract class BaseProvinceHistoryFile {
             builder.append("}\n");
         }
 
-        for (PartyLoyalty partyLoyalty: getPartyLoyalties()) {
+        for (PartyLoyalty partyLoyalty : getPartyLoyalties()) {
             builder.append("\n");
             builder.append("party_loyalty = {\n");
             builder.append("\tideology = ").append(partyLoyalty.getIdeology()).append("\n");
