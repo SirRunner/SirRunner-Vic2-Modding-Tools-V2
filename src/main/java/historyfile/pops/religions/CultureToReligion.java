@@ -76,6 +76,7 @@ public enum CultureToReligion {
     HUORN("ent"),
     GREAT_EAGLE("eagle"),
     RAVEN("eagle"),
+    CREBAIN("eagle"),
     GREAT_SPIDER("spider"),
     WIGHT("undead"),
     OATHBREAKER("undead"),
